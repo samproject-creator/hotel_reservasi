@@ -165,6 +165,8 @@
             updateSummary();
         }));
 
+        document.getElementById('uang_muka').addEventListener('input', updateSummary);
+
         const kamarsData = @json($kamars);
 
         function fetchAvailableRooms() {
@@ -191,27 +193,39 @@
         function updateSummary() {
             const checkin = new Date(checkinInput.value);
             const checkout = new Date(checkoutInput.value);
-            const diffTime = Math.abs(checkout - checkin);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            const duration = isNaN(diffDays) || diffDays < 0 ? 0 : diffDays;
+            // Set both to midnight to avoid DST issues
+            checkin.setHours(0, 0, 0, 0);
+            checkout.setHours(0, 0, 0, 0);
+
+            const diffTime = checkout - checkin;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            const duration = isNaN(diffDays) || diffDays <= 0 ? 0 : diffDays;
             document.getElementById('summaryDuration').textContent = `${duration} Nights`;
 
-            const selectedRoomIds = Array.from(document.getElementById('kamar_select').selectedOptions).map(o => o.value);
-            document.getElementById('summaryRoomsCount').textContent = `${selectedRoomIds.length} Selected`;
+            const selectedOptions = Array.from(document.getElementById('kamar_select').selectedOptions);
+            document.getElementById('summaryRoomsCount').textContent = `${selectedOptions.length} Selected`;
 
             let totalPrice = 0;
-            const selectOptions = document.getElementById('kamar_select').options;
-            for (let i = 0; i < selectOptions.length; i++) {
-                if (selectOptions[i].selected) {
-                    const roomId = selectOptions[i].value;
-                    const room = kamarsData.find(k => k.id == roomId);
-                    if (room) {
-                        totalPrice += room.tipe_kamar.harga_per_malam * duration;
-                    }
+            selectedOptions.forEach(option => {
+                const roomId = option.value;
+                const room = kamarsData.find(k => k.id == roomId);
+                if (room) {
+                    totalPrice += parseFloat(room.tipe_kamar.harga_per_malam) * duration;
                 }
-            }
+            });
+
             document.getElementById('summaryTotalPrice').textContent = `Rp ${new Intl.NumberFormat('id-ID').format(totalPrice)}`;
+
+            // Real-time validation for DP
+            const dpInput = document.getElementById('uang_muka');
+            const dp = parseFloat(dpInput.value) || 0;
+            if (dp > totalPrice) {
+                dpInput.classList.add('border-red-500', 'ring-red-500');
+            } else {
+                dpInput.classList.remove('border-red-500', 'ring-red-500');
+            }
         }
 
         function updateRoomPreviews() {
@@ -231,7 +245,7 @@
                             <img src="${imageUrl}" class="w-16 h-16 object-cover rounded-lg">
                             <div class="flex-1">
                                 <p class="text-sm font-bold text-gray-900 dark:text-white">Room ${room.nomor_kamar}</p>
-                                <p class="text-xs text-gray-500">${room.tipe_kamar.nama_tipe}</p>
+                                <p class="text-[10px] text-gray-500">${room.tipe_kamar.nama_tipe} • Max ${room.tipe_kamar.kapasitas} Pax</p>
                                 <p class="text-xs font-bold text-primary-600 mt-1">Rp ${new Intl.NumberFormat('id-ID').format(room.tipe_kamar.harga_per_malam)}/night</p>
                             </div>
                         </div>

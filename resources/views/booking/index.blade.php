@@ -5,7 +5,7 @@
 @section('content')
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">Bookings</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Bookings</h1>
         <a href="{{ route('booking.create') }}" class="px-4 py-2 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2">
             <i data-lucide="plus" class="w-5 h-5"></i>
             New Booking
@@ -15,24 +15,24 @@
     <x-card>
         <div class="overflow-x-auto">
             <table class="w-full text-left">
-                <thead class="bg-gray-50">
+                <thead class="bg-gray-50 dark:bg-gray-800/50">
                     <tr>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Booking ID</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Guest</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Dates</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Booking ID</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Guest</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dates</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                     @foreach($bookings as $booking)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                         <td class="px-6 py-4">
-                            <span class="text-sm font-bold text-gray-900">{{ $booking->kode_booking }}</span>
+                            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $booking->kode_booking }}</span>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ $booking->tamu->nama_lengkap }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            {{ $booking->tanggal_checkin }} to {{ $booking->tanggal_checkout }}
+                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $booking->tamu->nama_lengkap }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
+                            {{ $booking->tanggal_checkin->format('Y-m-d') }} to {{ $booking->tanggal_checkout->format('Y-m-d') }}
                         </td>
                         <td class="px-6 py-4">
                             <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider

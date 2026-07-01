@@ -5,7 +5,7 @@
 @section('content')
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">Rooms</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Rooms</h1>
         @if(auth()->user()->isAdmin())
         <a href="{{ route('kamar.create') }}" class="px-4 py-2 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2">
             <i data-lucide="plus" class="w-5 h-5"></i>
@@ -17,22 +17,22 @@
     <x-card>
         <div class="overflow-x-auto">
             <table class="w-full text-left">
-                <thead class="bg-gray-50">
+                <thead class="bg-gray-50 dark:bg-gray-800/50">
                     <tr>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Room</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Room</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                     @foreach($kamars as $kamar)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                         <td class="px-6 py-4">
-                            <p class="text-sm font-semibold text-gray-900">Room {{ $kamar->nomor_kamar }}</p>
-                            <p class="text-xs text-gray-500">Floor {{ $kamar->lantai }}</p>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white">Room {{ $kamar->nomor_kamar }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Floor {{ $kamar->lantai }}</p>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{ $kamar->tipeKamar->nama_tipe }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $kamar->tipeKamar->nama_tipe }}</td>
                         <td class="px-6 py-4">
                             <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider
                                 {{ $kamar->status === 'tersedia' ? 'bg-green-50 text-green-700' : '' }}
