@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\DB;
 
 class BookingService
 {
+    protected $fonnte;
+
+    public function __construct(FonnteService $fonnte)
+    {
+        $this->fonnte = $fonnte;
+    }
+
     public function createBooking(array $data)
     {
         $booking = DB::transaction(function () use ($data) {
@@ -58,16 +65,33 @@ class BookingService
     protected function notifyBookingConfirmed(Booking $booking)
     {
         $booking->load('tamu');
-        $fonnte = new FonnteService();
         $message = "Halo {$booking->tamu->nama_lengkap},\n\nBooking Anda di LuxeHotel telah DIKONFIRMASI!\nKode Booking: {$booking->kode_booking}\nCheck-in: {$booking->tanggal_checkin}\nCheck-out: {$booking->tanggal_checkout}\n\nTerima kasih.";
 
-        $fonnte->sendMessage($booking->tamu->no_hp, $message);
+        $this->fonnte->sendMessage($booking->tamu->no_hp, $message);
     }
 
     public function checkAvailability($kamarIds, $checkin, $checkout)
     {
-        // Simple check: is the room status 'available'?
-        // A more complex check would look at existing bookings for those dates
-        return Kamar::whereIn('id', $kamarIds)->where('status', 'tersedia')->count() === count($kamarIds);
+        // Check if rooms are not in 'maintenance'
+        $availableRooms = Kamar::whereIn('id', $kamarIds)
+            ->where('status', '!=', 'perbaikan')
+            ->count();
+
+        if ($availableRooms !== count($kamarIds)) {
+            return false;
+        }
+
+        // Check for overlapping bookings
+        $overlappingBookings = Booking::whereHas('kamars', function ($query) use ($kamarIds) {
+            $query->whereIn('kamars.id', $kamarIds);
+        })
+        ->where(function ($query) use ($checkin, $checkout) {
+            $query->where('tanggal_checkin', '<', $checkout)
+                  ->where('tanggal_checkout', '>', $checkin);
+        })
+        ->whereNotIn('status', ['cancelled', 'checkout'])
+        ->exists();
+
+        return !$overlappingBookings;
     }
 }

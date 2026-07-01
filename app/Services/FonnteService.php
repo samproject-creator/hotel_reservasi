@@ -12,7 +12,8 @@ class FonnteService
 
     public function __construct()
     {
-        $this->token = config('services.fonnte.token', '');
+        // Prioritaskan setting dari database, fallback ke config/env
+        $this->token = \App\Models\Setting::get('fonnte_token', config('services.fonnte.token', ''));
     }
 
     /**
