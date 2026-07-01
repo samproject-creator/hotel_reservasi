@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Storage;
 
 class KamarController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Kamar::class, 'kamar');
+    }
+
     public function index(Request $request)
     {
         $query = Kamar::with('tipeKamar');

@@ -1,138 +1,111 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerbang Masuk Kastil — Hotel Transylvania</title>
+    <title>LuxeHotel - Sign In</title>
     
     {{-- Tailwind CSS via CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
     {{-- Lucide Icons --}}
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
-    <style>
-        /* Animasi kelelawar terbang melintasi layar */
-        @keyframes bat-fly-1 {
-            0% { transform: translate(-10%, 80vh) scale(0.6) rotate(10deg); opacity: 0; }
-            5% { opacity: 0.7; }
-            90% { opacity: 0.7; }
-            100% { transform: translate(110vw, 20vh) scale(1.2) rotate(-10deg); opacity: 0; }
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
         }
-        @keyframes bat-fly-2 {
-            0% { transform: translate(110vw, 70vh) scale(0.5) scaleX(-1) rotate(-15deg); opacity: 0; }
-            10% { opacity: 0.6; }
-            85% { opacity: 0.6; }
-            100% { transform: translate(-10%, 10vh) scale(1) scaleX(-1) rotate(15deg); opacity: 0; }
-        }
-
-        .bat-1 {
-            animation: bat-fly-1 12s linear infinite;
-        }
-        .bat-2 {
-            animation: bat-fly-2 16s linear infinite;
-            animation-delay: 4s;
-        }
-    </style>
+    </script>
 </head>
-<body class="bg-[#0d0b0f] min-h-screen flex items-center justify-center relative overflow-hidden">
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-6">
 
-    {{-- ── BACKGROUND IMAGE KASTIL DENGAN OVERLAY GELAP ── --}}
-    <div class="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
-         style="background-image: url('{{ asset('images/kastil.jpg') }}');">
-         
-         <div class="absolute inset-0 bg-gradient-to-tr from-[#0d0b0f] via-[#0d0b0f]/85 to-purple-950/40"></div>
-         <div class="absolute inset-0 bg-black/40"></div>
-    </div>
-
-    {{-- ── ANIMASI KELELAWAR LEWAT ── --}}
-    <div class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-        {{-- Kelelawar 1 (Kiri ke Kanan) --}}
-        <div class="bat-1 absolute text-4xl select-none">🦇</div>
-        <div class="bat-1 absolute text-2xl select-none" style="animation-delay: 0.5s; margin-top: -40px;">🦇</div>
-        
-        {{-- Kelelawar 2 (Kanan ke Kiri) --}}
-        <div class="bat-2 absolute text-3xl select-none">🦇</div>
-    </div>
-
-    {{-- ── CARD LOGIN ── --}}
-    <div class="relative z-20 w-full max-w-md mx-4">
-        <div class="bg-slate-900/80 backdrop-blur-md border border-purple-900/50 p-8 rounded-xl shadow-2xl space-y-6">
-            
-            {{-- Header Logo --}}
-            <div class="text-center space-y-2">
-                <div class="inline-flex p-3 bg-purple-950/60 border border-purple-800/40 rounded-full text-purple-400 mb-1">
-                    <i data-lucide="castle" class="w-8 h-8"></i>
-                </div>
-                <h1 class="text-2xl font-serif font-bold text-purple-100 tracking-wide">Hotel Transylvania</h1>
-                <p class="text-xs text-slate-400">Masukkan e-mail dan sandi untuk mengakses sistem</p>
+    <div class="w-full max-w-md">
+        {{-- Logo --}}
+        <div class="flex flex-col items-center mb-8">
+            <div class="bg-primary-600 p-3 rounded-2xl text-white shadow-lg shadow-primary-200 mb-4">
+                <i data-lucide="hotel" class="w-8 h-8"></i>
             </div>
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">LuxeHotel</h1>
+            <p class="text-gray-500 mt-2 font-medium">Premium Management System</p>
+        </div>
 
-            {{-- Form Login --}}
-            <form action="{{ route('login') }}" method="POST" class="space-y-4">
+        {{-- Login Card --}}
+        <div class="bg-white p-8 rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100">
+            <h2 class="text-xl font-bold text-gray-900 mb-6">Welcome Back</h2>
+
+            <form action="{{ route('login') }}" method="POST" class="space-y-5">
                 @csrf
 
-                {{-- Input Email --}}
-                <div class="space-y-1">
-                    <label for="email" class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">User ID (Email)</label>
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
-                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
                         </span>
                         <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus
-                               placeholder="dracula@transylvania.com"
-                               class="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-purple-950 rounded-lg text-slate-200 placeholder-slate-600 text-sm focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition-all">
+                               placeholder="name@company.com"
+                               class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
                     </div>
                     @error('email')
-                        <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-red-500 mt-1.5 font-medium">{{ $message }}</p>
                     @enderror
                 </div>
 
-                {{-- Input Password --}}
-                <div class="space-y-1">
-                    <div class="flex justify-between items-center">
-                        <label for="password" class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Password</label>
-                        <a href="#" class="text-xs text-purple-400 hover:underline">Lupa Mantra?</a>
-                    </div>
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
-                            <i data-lucide="lock" class="w-4 h-4"></i>
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
                         </span>
                         <input type="password" id="password" name="password" required
                                placeholder="••••••••"
-                               class="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-purple-950 rounded-lg text-slate-200 placeholder-slate-600 text-sm focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition-all">
+                               class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
                     </div>
                     @error('password')
-                        <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-red-500 mt-1.5 font-medium">{{ $message }}</p>
                     @enderror
                 </div>
 
-                {{-- Ingat Saya / Remember Me --}}
-                <div class="flex items-center justify-between pt-1">
-                    <label class="flex items-center cursor-pointer select-none text-xs text-slate-400">
-                        <input type="checkbox" name="remember" class="rounded bg-slate-950 border-purple-950 text-purple-600 focus:ring-0 focus:ring-offset-0 mr-2">
-                        Simpan Info Login
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center cursor-pointer select-none text-sm text-gray-600 font-medium">
+                        <input type="checkbox" name="remember" class="rounded-lg bg-gray-50 border-gray-200 text-primary-600 focus:ring-primary-500/20 mr-2.5 w-4 h-4">
+                        Keep me signed in
                     </label>
                 </div>
 
-                {{-- Tombol Submit --}}
                 <button type="submit" 
-                        class="w-full py-3 bg-gradient-to-r from-purple-800 to-indigo-900 hover:from-purple-700 hover:to-indigo-800 text-purple-100 text-sm font-semibold rounded-lg shadow-md hover:shadow-purple-900/30 transition-all flex items-center justify-center gap-2 border border-purple-700/50">
-                    <i data-lucide="key-round" class="w-4 h-4"></i> LOGIN
+                        class="w-full py-3.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary-100 transition-all flex items-center justify-center gap-2 transform active:scale-[0.98]">
+                    Sign In
                 </button>
             </form>
-
-            {{-- Footer Info --}}
-            <div class="pt-2 border-t border-purple-950/40 text-center">
-                <p class="text-[11px] text-slate-500">
-                    Hanya untuk petugas resmi Hotel Transylvania.
-                </p>
-            </div>
-
         </div>
+
+        <p class="text-center mt-8 text-sm text-gray-500 font-medium">
+            &copy; {{ date('Y') }} LuxeHotel Premium Management
+        </p>
     </div>
 
     <script>
-        // Inisialisasi ikon Lucide
         document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
     </script>
 </body>

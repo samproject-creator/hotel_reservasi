@@ -5,18 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Kamar;
 use App\Models\Tamu;
+use App\Http\Requests\StoreBookingRequest;
+use App\Http\Requests\UpdateBookingRequest;
+use App\Services\BookingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
+    protected $bookingService;
+
+    public function __construct(BookingService $bookingService)
+    {
+        $this->bookingService = $bookingService;
+        $this->authorizeResource(Booking::class, 'booking');
+    }
+
     public function index(Request $request)
     {
         $query = Booking::with(['tamu', 'kamars.tipeKamar', 'user']);
 
         if ($request->filled('search')) {
-            $query->where('kode_booking', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('tamu', fn($q) => $q->where('nama_lengkap', 'like', '%' . $request->search . '%'));
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('kode_booking', 'like', '%' . $search . '%')
+                  ->orWhereHas('tamu', fn($t) => $t->where('nama_lengkap', 'like', '%' . $search . '%'));
+            });
         }
 
         if ($request->filled('status')) {
@@ -34,57 +47,13 @@ class BookingController extends Controller
         return view('booking.create', compact('tamus', 'kamars'));
     }
 
-    public function store(Request $request)
+    public function store(StoreBookingRequest $request)
     {
-        $validated = $request->validate([
-            'tamu_id'          => 'required|exists:tamu,id',
-            'tanggal_checkin'  => 'required|date|after_or_equal:today',
-            'tanggal_checkout' => 'required|date|after:tanggal_checkin',
-            'jumlah_tamu'      => 'required|integer|min:1',
-            'kamar_ids'        => 'required|array|min:1',
-            'kamar_ids.*'      => 'exists:kamar,id',
-            'uang_muka'        => 'nullable|numeric|min:0',
-            'catatan'          => 'nullable|string',
-        ]);
+        if (!$this->bookingService->checkAvailability($request->kamar_ids, $request->tanggal_checkin, $request->tanggal_checkout)) {
+            return back()->with('error', 'Satu atau lebih kamar yang dipilih tidak tersedia untuk tanggal tersebut.');
+        }
 
-        DB::transaction(function () use ($validated, $request) {
-            $checkin  = \Carbon\Carbon::parse($validated['tanggal_checkin']);
-            $checkout = \Carbon\Carbon::parse($validated['tanggal_checkout']);
-            $malam    = $checkin->diffInDays($checkout);
-
-            // Hitung total harga dari kamar yang dipilih
-            $totalHarga = 0;
-            $kamarData  = [];
-
-            foreach ($validated['kamar_ids'] as $kamarId) {
-                $kamar       = Kamar::with('tipeKamar')->findOrFail($kamarId);
-                $harga       = $kamar->tipeKamar->harga_per_malam;
-                $subtotal    = $harga * $malam;
-                $totalHarga += $subtotal;
-
-                $kamarData[$kamarId] = [
-                    'harga_malam'  => $harga,
-                    'jumlah_malam' => $malam,
-                    'subtotal'     => $subtotal,
-                ];
-            }
-
-            $booking = Booking::create([
-                'kode_booking'     => Booking::generateKode(),
-                'tamu_id'          => $validated['tamu_id'],
-                'user_id'          => auth()->id(),
-                'tanggal_checkin'  => $validated['tanggal_checkin'],
-                'tanggal_checkout' => $validated['tanggal_checkout'],
-                'jumlah_tamu'      => $validated['jumlah_tamu'],
-                'status'           => 'confirmed',
-                'total_harga'      => $totalHarga,
-                'uang_muka'        => $validated['uang_muka'] ?? 0,
-                'catatan'          => $validated['catatan'],
-            ]);
-
-            // Attach kamar (Many-to-Many)
-            $booking->kamars()->attach($kamarData);
-        });
+        $this->bookingService->createBooking($request->validated());
 
         return redirect()->route('booking.index')->with('success', 'Booking berhasil dibuat.');
     }
@@ -107,30 +76,18 @@ class BookingController extends Controller
         return view('booking.edit', compact('booking', 'tamus', 'kamars'));
     }
 
-    public function update(Request $request, Booking $booking)
+    public function update(UpdateBookingRequest $request, Booking $booking)
     {
-        $validated = $request->validate([
-            'tanggal_checkin'  => 'required|date',
-            'tanggal_checkout' => 'required|date|after:tanggal_checkin',
-            'jumlah_tamu'      => 'required|integer|min:1',
-            'uang_muka'        => 'nullable|numeric|min:0',
-            'catatan'          => 'nullable|string',
-        ]);
-
-        $booking->update($validated);
-
+        $booking->update($request->validated());
         return redirect()->route('booking.show', $booking)->with('success', 'Booking berhasil diperbarui.');
     }
 
     public function cancel(Booking $booking)
     {
-        if (in_array($booking->status, ['checkin', 'checkout'])) {
-            return back()->with('error', 'Booking tidak dapat dibatalkan.');
-        }
+        $this->authorize('cancel', $booking);
 
-        DB::transaction(function () use ($booking) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($booking) {
             $booking->update(['status' => 'cancelled']);
-            // Kembalikan status kamar ke tersedia
             $booking->kamars()->update(['status' => 'tersedia']);
         });
 
@@ -147,16 +104,16 @@ class BookingController extends Controller
         $booking->delete();
         return redirect()->route('booking.index')->with('success', 'Booking berhasil dihapus.');
     }
+
     public function toggleStatus(Booking $booking)
     {
         if (in_array($booking->status, ['checkin', 'checkout', 'cancelled'])) {
             return back()->with('error', 'Status transaksi yang sudah diproses tidak dapat diubah kembali.');
         }
 
-        // Tukar nilai status secara bergantian
         $newStatus = ($booking->status === 'pending') ? 'confirmed' : 'pending';
         $booking->update(['status' => $newStatus]);
 
-        return redirect()->route('booking.index')->with('success', 'Status manifes booking berhasil diperbarui menjadi: ' . ucfirst($newStatus));
+        return redirect()->route('booking.index')->with('success', 'Status booking berhasil diperbarui.');
     }
 }

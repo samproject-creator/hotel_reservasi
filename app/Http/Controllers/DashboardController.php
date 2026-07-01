@@ -28,8 +28,16 @@ class DashboardController extends Controller
                                        ->sum('total_bayar');
 
         // --- Data Grafik: Booking 6 bulan terakhir ---
+        if (DB::getDriverName() === 'sqlite') {
+            $bookingFormat = "strftime('%Y-%m', created_at)";
+            $checkoutFormat = "strftime('%Y-%m', waktu_checkout)";
+        } else {
+            $bookingFormat = "DATE_FORMAT(created_at, '%Y-%m')";
+            $checkoutFormat = "DATE_FORMAT(waktu_checkout, '%Y-%m')";
+        }
+
         $grafikBooking = Booking::select(
-                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as bulan"),
+                DB::raw("$bookingFormat as bulan"),
                 DB::raw('COUNT(*) as total')
             )
             ->where('created_at', '>=', now()->subMonths(6))
@@ -39,7 +47,7 @@ class DashboardController extends Controller
 
         // --- Data Grafik: Pendapatan 6 bulan terakhir ---
         $grafikPendapatan = Checkout::select(
-                DB::raw("DATE_FORMAT(waktu_checkout, '%Y-%m') as bulan"),
+                DB::raw("$checkoutFormat as bulan"),
                 DB::raw('SUM(total_bayar) as total')
             )
             ->where('waktu_checkout', '>=', now()->subMonths(6))
