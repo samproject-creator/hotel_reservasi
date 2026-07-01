@@ -17,14 +17,12 @@ class TipeKamarController extends Controller
 
         $tipeKamars = $query->orderBy('nama_tipe')->paginate(10)->withQueryString();
         
-        // GANTI DI SINI: Sesuaikan dengan nama folder asli kamu
-        // Jika nama foldernya tipe_kamar, maka tulis 'tipe_kamar.index'
         return view('tipe_kamar.index', compact('tipeKamars')); 
     }
 
     public function create()
     {
-        return view('tipe-kamar.create');
+        return view('tipe_kamar.create');
     }
     public function store(Request $request)
     {
@@ -71,7 +69,7 @@ class TipeKamarController extends Controller
 
     public function edit(TipeKamar $tipeKamar)
     {
-        return view('tipe-kamar.edit', compact('tipeKamar'));
+        return view('tipe_kamar.edit', compact('tipeKamar'));
     }
 
     public function destroy(TipeKamar $tipeKamar)

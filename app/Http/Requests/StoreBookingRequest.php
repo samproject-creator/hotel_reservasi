@@ -24,4 +24,26 @@ class StoreBookingRequest extends FormRequest
             'catatan'          => 'nullable|string',
         ];
     }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $checkin = $this->input('tanggal_checkin');
+            $checkout = $this->input('tanggal_checkout');
+            $kamarIds = $this->input('kamar_ids');
+            $dp = $this->input('uang_muka', 0);
+
+            if ($checkin && $checkout && $kamarIds) {
+                $days = \Carbon\Carbon::parse($checkin)->diffInDays(\Carbon\Carbon::parse($checkout));
+                $totalPrice = \App\Models\Kamar::whereIn('id', $kamarIds)
+                    ->with('tipeKamar')
+                    ->get()
+                    ->sum(fn($k) => $k->tipeKamar->harga_per_malam * $days);
+
+                if ($dp > $totalPrice) {
+                    $validator->errors()->add('uang_muka', 'Uang muka tidak boleh melebihi total harga (Rp ' . number_format($totalPrice) . ').');
+                }
+            }
+        });
+    }
 }

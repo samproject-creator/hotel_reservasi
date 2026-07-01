@@ -40,10 +40,38 @@ class BookingController extends Controller
         return view('booking.index', compact('bookings'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $tamus  = Tamu::orderBy('nama_lengkap')->get();
-        $kamars = Kamar::with('tipeKamar')->where('status', 'tersedia')->get();
+
+        $query = Kamar::with('tipeKamar');
+
+        if ($request->filled(['checkin', 'checkout'])) {
+            $checkin = $request->checkin;
+            $checkout = $request->checkout;
+
+            $occupiedKamarIds = Booking::where(function ($q) use ($checkin, $checkout) {
+                $q->where('tanggal_checkin', '<', $checkout)
+                  ->where('tanggal_checkout', '>', $checkin);
+            })
+            ->whereNotIn('status', ['cancelled', 'checkout'])
+            ->with('kamars')
+            ->get()
+            ->pluck('kamars.*.id')
+            ->flatten()
+            ->unique();
+
+            $query->whereNotIn('id', $occupiedKamarIds);
+        } else {
+            $query->where('status', 'tersedia');
+        }
+
+        $kamars = $query->get();
+
+        if ($request->ajax()) {
+            return response()->json($kamars);
+        }
+
         return view('booking.create', compact('tamus', 'kamars'));
     }
 

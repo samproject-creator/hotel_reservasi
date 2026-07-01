@@ -16,7 +16,7 @@
     </div>
 
     <x-card>
-        <form action="{{ route('kamar.update', $kamar) }}" method="POST">
+        <form action="{{ route('kamar.update', $kamar) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -52,10 +52,36 @@
                     <select name="status" id="status"
                         class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
                         <option value="tersedia" {{ old('status', $kamar->status) == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
-                        <option value="terisi" {{ old('status', $kamar->status) == 'terisi' ? 'selected' : '' }}>Terisi</option>
-                        <option value="perbaikan" {{ old('status', $kamar->status) == 'perbaikan' ? 'selected' : '' }}>Perbaikan</option>
+                        <option value="ditempati" {{ old('status', $kamar->status) == 'ditempati' ? 'selected' : '' }}>Ditempati</option>
+                        <option value="maintenance" {{ old('status', $kamar->status) == 'maintenance' ? 'selected' : '' }}>Maintenance</option>
                     </select>
                     @error('status') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="md:col-span-2 space-y-2">
+                    <label for="images" class="text-sm font-bold text-gray-700">Add Room Images (Multiple)</label>
+                    <input type="file" name="images[]" id="images" multiple
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    <p class="text-xs text-gray-500">Uploading new images will replace all current ones.</p>
+                    @error('images.*') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                </div>
+
+                @if($kamar->images)
+                <div class="md:col-span-2">
+                    <p class="text-sm font-bold text-gray-700 mb-2">Current Images:</p>
+                    <div class="flex gap-2 flex-wrap">
+                        @foreach($kamar->images as $image)
+                            <img src="{{ Storage::url($image) }}" class="w-24 h-24 object-cover rounded-lg border border-gray-200">
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <div class="md:col-span-2 space-y-2">
+                    <label for="keterangan" class="text-sm font-bold text-gray-700">Description / Notes</label>
+                    <textarea name="keterangan" id="keterangan" rows="3"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent">{{ old('keterangan', $kamar->keterangan) }}</textarea>
+                    @error('keterangan') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                 </div>
             </div>
 

@@ -37,7 +37,7 @@
                 <div class="space-y-2">
                     <label for="email" class="text-sm font-bold text-gray-700">Email Address</label>
                     <input type="email" name="email" id="email" value="{{ old('email', $tamu->email) }}"
-                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent">
                     @error('email') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                 </div>
 
@@ -47,6 +47,36 @@
                         placeholder="08123456789"
                         class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
                     @error('no_hp') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label for="jenis_kelamin" class="text-sm font-bold text-gray-700">Gender</label>
+                    <select name="jenis_kelamin" id="jenis_kelamin" class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                        <option value="L" {{ old('jenis_kelamin', $tamu->jenis_kelamin) == 'L' ? 'selected' : '' }}>Laki-laki (Male)</option>
+                        <option value="P" {{ old('jenis_kelamin', $tamu->jenis_kelamin) == 'P' ? 'selected' : '' }}>Perempuan (Female)</option>
+                    </select>
+                    @error('jenis_kelamin') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label for="tanggal_lahir" class="text-sm font-bold text-gray-700">Birth Date</label>
+                    <input type="date" name="tanggal_lahir" id="tanggal_lahir" value="{{ old('tanggal_lahir', $tamu->tanggal_lahir ? $tamu->tanggal_lahir->format('Y-m-d') : '') }}"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                    @error('tanggal_lahir') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label for="pekerjaan" class="text-sm font-bold text-gray-700">Occupation</label>
+                    <input type="text" name="pekerjaan" id="pekerjaan" value="{{ old('pekerjaan', $tamu->pekerjaan) }}"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    @error('pekerjaan') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="space-y-2">
+                    <label for="kewarganegaraan" class="text-sm font-bold text-gray-700">Nationality</label>
+                    <input type="text" name="kewarganegaraan" id="kewarganegaraan" value="{{ old('kewarganegaraan', $tamu->kewarganegaraan) }}"
+                        class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                    @error('kewarganegaraan') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="md:col-span-2 space-y-2">

@@ -7,8 +7,8 @@ use App\Models\Checkout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Http;
 use App\Mail\KuitansiCheckoutMail;
+use App\Services\FonnteService;
 use Carbon\Carbon;
 
 class CheckoutController extends Controller
@@ -32,7 +32,7 @@ class CheckoutController extends Controller
         $sisaTagihan = $booking->total_harga - $booking->uang_muka;
         return view('checkout.show', compact('booking', 'sisaTagihan'));
     }
-    public function proses(Request $request, Booking $booking)
+    public function proses(Request $request, Booking $booking, FonnteService $fonnte)
     {
         if ($booking->status !== 'checkin') {
             return back()->with('error', 'Proses check-out hanya bisa dilakukan pada tamu yang berstatus Sedang Menginap (Check-In).');
@@ -70,18 +70,13 @@ class CheckoutController extends Controller
             Mail::to($booking->tamu->email)->send(new KuitansiCheckoutMail($booking));
         }
 
-        if ($booking->tamu && $booking->tamu->nomor_telepon) {
+        if ($booking->tamu && $booking->tamu->no_hp) {
             $pesanWa = "Halo " . $booking->tamu->nama_lengkap . ",\n\n" .
                        "Proses Check-out Anda dengan Kode Booking *" . $booking->kode_booking . "* telah BERHASIL.\n" .
                        "Status Tagihan: *LUNAS*\n\n" .
-                       "Terima kasih telah menginap di Hotel Transylvania!";
+                       "Terima kasih telah menginap di LuxeHotel!";
 
-            Http::withHeaders([
-                'Authorization' => env('FONNTE_TOKEN'),
-            ])->post('https://api.fonnte.com/send', [
-                'target'  => $booking->tamu->nomor_telepon,
-                'message' => $pesanWa,
-            ]);
+            $fonnte->sendMessage($booking->tamu->no_hp, $pesanWa);
         }
 
         return redirect()->route('booking.index')->with('success', 'Check-out berhasil! Pelunasan dicatat dan kuitansi otomatis terkirim.');

@@ -129,7 +129,7 @@
 
             <x-card title="Booking QR" class="flex flex-col items-center justify-center text-center">
                 <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 mb-4 inline-block">
-                    {!! \App\Services\QrCodeService::generate($booking->kode_booking, 150) !!}
+                    {!! \App\Services\QrCodeService::generate($booking, 150) !!}
                 </div>
                 <p class="text-xs text-gray-400">Scan this code for quick check-in</p>
             </x-card>

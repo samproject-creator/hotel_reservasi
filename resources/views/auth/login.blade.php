@@ -116,12 +116,6 @@
                 @endif
             </form>
 
-            <div class="mt-6 pt-6 border-t border-gray-100 text-center">
-                <p class="text-sm text-gray-600">
-                    Don't have an account?
-                    <a href="{{ route('register') }}" class="text-primary-600 font-bold hover:underline">Sign Up</a>
-                </p>
-            </div>
         </div>
 
         <p class="text-center mt-8 text-sm text-gray-500 font-medium">

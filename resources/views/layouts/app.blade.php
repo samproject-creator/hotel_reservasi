@@ -19,6 +19,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -51,63 +52,68 @@
             color: #0284c7;
             border-right: 4px solid #0ea5e9;
         }
+        .dark .sidebar-item-active {
+            background-color: rgba(14, 165, 233, 0.05);
+            color: #38bdf8;
+            border-right: 4px solid #38bdf8;
+        }
     </style>
     @stack('styles')
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-200">
 
     <div class="min-h-screen flex">
         {{-- Sidebar --}}
-        <aside id="sidebar" class="bg-white border-r border-gray-200 w-64 fixed h-full z-50 transition-transform duration-300 lg:translate-x-0 -translate-x-full">
-            <div class="p-6 flex items-center gap-3 border-b border-gray-100">
+        <aside id="sidebar" class="bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 w-64 fixed h-full z-50 transition-transform duration-300 lg:translate-x-0 -translate-x-full">
+            <div class="p-6 flex items-center gap-3 border-b border-gray-100 dark:border-gray-700">
                 <div class="bg-primary-600 p-2 rounded-lg text-white">
                     <i data-lucide="hotel" class="w-6 h-6"></i>
                 </div>
-                <span class="text-xl font-bold tracking-tight text-gray-900">LuxeHotel</span>
+                <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">LuxeHotel</span>
             </div>
 
             <nav class="mt-6 px-3 space-y-1">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('dashboard') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('dashboard') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                     <span class="font-medium">Dashboard</span>
                 </a>
 
                 <div class="pt-4 pb-2 px-4">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Operations</span>
+                    <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Operations</span>
                 </div>
 
-                <a href="{{ route('booking.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('booking.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('booking.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('booking.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="calendar" class="w-5 h-5"></i>
                     <span class="font-medium">Bookings</span>
                 </a>
 
-                <a href="{{ route('checkin.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('checkin.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('checkin.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('checkin.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="log-in" class="w-5 h-5"></i>
                     <span class="font-medium">Check-In</span>
                 </a>
 
-                <a href="{{ route('checkout.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('checkout.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('checkout.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('checkout.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
                     <span class="font-medium">Check-Out</span>
                 </a>
 
                 <div class="pt-4 pb-2 px-4">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Master Data</span>
+                    <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Master Data</span>
                 </div>
 
-                <a href="{{ route('tamu.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('tamu.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('tamu.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('tamu.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="users" class="w-5 h-5"></i>
                     <span class="font-medium">Guests</span>
                 </a>
 
                 @auth
                 @if(auth()->user()->isAdmin())
-                <a href="{{ route('kamar.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('kamar.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('kamar.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('kamar.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="door-closed" class="w-5 h-5"></i>
                     <span class="font-medium">Rooms</span>
                 </a>
 
-                <a href="{{ route('tipe-kamar.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('tipe-kamar.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('tipe-kamar.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('tipe-kamar.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="layers" class="w-5 h-5"></i>
                     <span class="font-medium">Room Types</span>
                 </a>
@@ -115,27 +121,27 @@
                 @endauth
 
                 <div class="pt-4 pb-2 px-4">
-                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Reports & System</span>
+                    <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Reports & System</span>
                 </div>
 
-                <a href="{{ route('laporan.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('laporan.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('laporan.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('laporan.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="file-text" class="w-5 h-5"></i>
                     <span class="font-medium">Reports</span>
                 </a>
 
                 @auth
                 @if(auth()->user()->isAdmin())
-                <a href="{{ route('activity-log.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('activity-log.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('activity-log.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('activity-log.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="history" class="w-5 h-5"></i>
                     <span class="font-medium">Activity Log</span>
                 </a>
 
-                <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('users.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('users.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('users.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="user-cog" class="w-5 h-5"></i>
                     <span class="font-medium">User Management</span>
                 </a>
 
-                <a href="{{ route('settings.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors {{ request()->routeIs('settings.*') ? 'sidebar-item-active' : '' }}">
+                <a href="{{ route('settings.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white transition-colors {{ request()->routeIs('settings.*') ? 'sidebar-item-active' : '' }}">
                     <i data-lucide="settings" class="w-5 h-5"></i>
                     <span class="font-medium">Settings</span>
                 </a>
@@ -147,12 +153,18 @@
         {{-- Main Content Area --}}
         <div class="flex-1 lg:ml-64 flex flex-col min-h-screen">
             {{-- Topbar --}}
-            <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 sticky top-0 z-40">
-                <button onclick="toggleSidebar()" class="lg:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-lg">
+            <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-16 flex items-center justify-between px-6 sticky top-0 z-40">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
 
                 <div class="flex items-center gap-4 ml-auto">
+                    {{-- Dark Mode Toggle --}}
+                    <button onclick="toggleDarkMode()" class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    </button>
+
                     {{-- User Dropdown --}}
                     @auth
                     <div class="relative" x-data="{ open: false }">
@@ -198,7 +210,7 @@
                 @yield('content')
             </main>
 
-            <footer class="p-6 text-center text-gray-500 text-sm border-t border-gray-200 bg-white">
+            <footer class="p-6 text-center text-gray-500 dark:text-gray-400 text-sm border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors">
                 &copy; {{ date('Y') }} LuxeHotel Premium. All rights reserved.
             </footer>
         </div>
@@ -208,6 +220,11 @@
 
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
         });
@@ -217,6 +234,11 @@
             const overlay = document.getElementById('sidebar-overlay');
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', isDark);
         }
     </script>
     @stack('scripts')

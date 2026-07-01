@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Booking;
 use App\Models\Kamar;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingConfirmationMail;
 
 class BookingService
 {
@@ -65,16 +67,26 @@ class BookingService
     protected function notifyBookingConfirmed(Booking $booking)
     {
         $booking->load('tamu');
-        $message = "Halo {$booking->tamu->nama_lengkap},\n\nBooking Anda di LuxeHotel telah DIKONFIRMASI!\nKode Booking: {$booking->kode_booking}\nCheck-in: {$booking->tanggal_checkin}\nCheck-out: {$booking->tanggal_checkout}\n\nTerima kasih.";
 
+        // WhatsApp Notification
+        $message = "Halo {$booking->tamu->nama_lengkap},\n\nBooking Anda di LuxeHotel telah DIKONFIRMASI!\nKode Booking: {$booking->kode_booking}\nCheck-in: {$booking->tanggal_checkin}\nCheck-out: {$booking->tanggal_checkout}\n\nTerima kasih.";
         $this->fonnte->sendMessage($booking->tamu->no_hp, $message);
+
+        // Email Notification
+        if ($booking->tamu->email) {
+            try {
+                Mail::to($booking->tamu->email)->send(new BookingConfirmationMail($booking));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send booking confirmation email: ' . $e->getMessage());
+            }
+        }
     }
 
     public function checkAvailability($kamarIds, $checkin, $checkout)
     {
         // Check if rooms are not in 'maintenance'
         $availableRooms = Kamar::whereIn('id', $kamarIds)
-            ->where('status', '!=', 'perbaikan')
+            ->where('status', '!=', 'maintenance')
             ->count();
 
         if ($availableRooms !== count($kamarIds)) {
