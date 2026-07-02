@@ -17,6 +17,8 @@ class UpdateBookingRequest extends FormRequest
             'tanggal_checkin'  => 'required|date',
             'tanggal_checkout' => 'required|date|after:tanggal_checkin',
             'jumlah_tamu'      => 'required|integer|min:1',
+            'kamar_ids'        => 'required|array|min:1',
+            'kamar_ids.*'      => 'exists:kamar,id',
             'uang_muka'        => 'nullable|numeric|min:0',
             'catatan'          => 'nullable|string',
         ];

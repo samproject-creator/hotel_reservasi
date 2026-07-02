@@ -26,24 +26,29 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
             <x-card title="General Information">
-                <div class="grid grid-cols-2 gap-y-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-y-8">
                     <div>
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Booking ID</p>
-                        <p class="text-lg font-bold text-gray-900">{{ $booking->kode_booking }}</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Booking ID</p>
+                        <p class="text-xl font-black text-gray-900 dark:text-white">{{ $booking->kode_booking }}</p>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</p>
-                        <span class="mt-1 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider
-                            {{ $booking->status === 'confirmed' ? 'bg-blue-50 text-blue-700' : '' }}
-                            {{ $booking->status === 'checkin' ? 'bg-orange-50 text-orange-700' : '' }}
-                            {{ $booking->status === 'checkout' ? 'bg-green-50 text-green-700' : '' }}
-                            {{ $booking->status === 'cancelled' ? 'bg-red-50 text-red-700' : '' }}
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Status</p>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest
+                            {{ $booking->status === 'confirmed' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : '' }}
+                            {{ $booking->status === 'checkin' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : '' }}
+                            {{ $booking->status === 'checkout' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : '' }}
+                            {{ $booking->status === 'cancelled' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : '' }}
+                            {{ $booking->status === 'pending' ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-400' : '' }}
                         ">
                             {{ $booking->status }}
                         </span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Stay Duration</p>
+                        <p class="text-gray-900 dark:text-white font-bold">{{ $booking->jumlah_malam }} Nights</p>
                     </div>
                     <div>
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Check-In Date</p>
@@ -73,17 +78,20 @@
             <x-card title="Reserved Rooms">
                 <div class="space-y-4">
                     @foreach($booking->kamars as $kamar)
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
                         <div class="flex items-center gap-4">
-                            <div class="bg-white p-2 rounded-xl text-primary-600 shadow-sm border border-gray-100">
+                            <div class="bg-white dark:bg-gray-700 p-2 rounded-xl text-primary-600 shadow-sm border border-gray-100 dark:border-gray-600">
                                 <i data-lucide="door-closed" class="w-6 h-6"></i>
                             </div>
                             <div>
-                                <p class="font-bold text-gray-900">Room {{ $kamar->nomor_kamar }}</p>
-                                <p class="text-sm text-gray-500">{{ $kamar->tipeKamar->nama_tipe }}</p>
+                                <p class="font-bold text-gray-900 dark:text-white">Room {{ $kamar->nomor_kamar }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $kamar->tipeKamar->nama_tipe }}</p>
                             </div>
                         </div>
-                        <p class="font-bold text-gray-900">Rp {{ number_format($kamar->pivot->harga_malam, 0, ',', '.') }}<span class="text-xs text-gray-400 font-normal"> /night</span></p>
+                        <div class="text-right">
+                            <p class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($kamar->pivot->harga_malam, 0, ',', '.') }}</p>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">per night</p>
+                        </div>
                     </div>
                     @endforeach
                 </div>
@@ -93,36 +101,36 @@
         <div class="space-y-6">
             <x-card title="Guest Information">
                 <div class="space-y-4">
-                    <div class="flex items-center gap-3 pb-4 border-b border-gray-50">
-                        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
-                            <i data-lucide="user" class="w-5 h-5"></i>
+                    <div class="flex items-center gap-3 pb-4 border-b border-gray-50 dark:border-gray-700">
+                        <div class="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400">
+                            <i data-lucide="user" class="w-6 h-6"></i>
                         </div>
                         <div>
-                            <p class="font-bold text-gray-900">{{ $booking->tamu->nama_lengkap }}</p>
-                            <p class="text-xs text-gray-500">{{ $booking->tamu->nik }}</p>
+                            <p class="font-bold text-gray-900 dark:text-white leading-tight">{{ $booking->tamu->nama_lengkap }}</p>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">{{ $booking->tamu->nik }}</p>
                         </div>
                     </div>
-                    <div class="space-y-2">
-                        <p class="text-sm text-gray-600 flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i> {{ $booking->tamu->no_hp }}</p>
-                        <p class="text-sm text-gray-600 flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4"></i> {{ $booking->tamu->email ?? '-' }}</p>
+                    <div class="space-y-3">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-3"><i data-lucide="phone" class="w-4 h-4 text-primary-500"></i> {{ $booking->tamu->no_hp }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-3"><i data-lucide="mail" class="w-4 h-4 text-primary-500"></i> {{ $booking->tamu->email ?? '-' }}</p>
                     </div>
-                    <a href="{{ route('tamu.show', $booking->tamu) }}" class="block text-center text-sm font-bold text-primary-600 hover:text-primary-700 pt-2">View Guest History</a>
+                    <a href="{{ route('tamu.show', $booking->tamu) }}" class="block w-full py-2.5 bg-gray-50 dark:bg-gray-700 text-center text-xs font-bold text-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors">View Guest History</a>
                 </div>
             </x-card>
 
             <x-card title="Billing Summary">
-                <div class="space-y-3">
+                <div class="space-y-4">
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Total Bill</span>
-                        <span class="font-bold text-gray-900">Rp {{ number_format($booking->total_harga, 0, ',', '.') }}</span>
+                        <span class="text-gray-500 dark:text-gray-400">Total Bill</span>
+                        <span class="font-bold text-gray-900 dark:text-white">Rp {{ number_format($booking->total_harga, 0, ',', '.') }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Paid (DP)</span>
-                        <span class="font-bold text-blue-600">- Rp {{ number_format($booking->uang_muka, 0, ',', '.') }}</span>
+                        <span class="text-gray-500 dark:text-gray-400">Paid (DP)</span>
+                        <span class="font-bold text-blue-600 dark:text-blue-400">- Rp {{ number_format($booking->uang_muka, 0, ',', '.') }}</span>
                     </div>
-                    <div class="pt-3 border-t border-gray-100 flex justify-between">
-                        <span class="font-bold text-gray-900">Remaining</span>
-                        <span class="font-black text-lg text-primary-600">Rp {{ number_format($booking->total_harga - $booking->uang_muka, 0, ',', '.') }}</span>
+                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-end">
+                        <span class="font-bold text-gray-900 dark:text-white">Remaining</span>
+                        <span class="font-black text-xl text-primary-600">Rp {{ number_format($booking->total_harga - $booking->uang_muka, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </x-card>

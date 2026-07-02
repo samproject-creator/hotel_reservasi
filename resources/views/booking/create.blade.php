@@ -1,134 +1,166 @@
 @extends('layouts.app')
 
-@section('title', 'New Booking')
+@section('title', 'Modern Booking')
 
 @section('extra_css')
-<link href="https://cdn.jsdelivr.net/npm/slim-select@2.8.2/dist/slimselect.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 <style>
-    .ss-main { padding: 0.5rem; border-radius: 0.75rem; border-color: #e5e7eb; }
-    .dark .ss-main { background-color: #1f2937; border-color: #374151; color: white; }
-    .dark .ss-content { background-color: #1f2937; color: white; }
-    .dark .ss-list .ss-option:hover { background-color: #374151; }
+    .ts-control { border-radius: 0.75rem !important; padding: 0.6rem 1rem !important; }
+    .dark .ts-control { background-color: #1f2937 !important; color: white !important; border-color: #374151 !important; }
+    .dark .ts-dropdown { background-color: #1f2937 !important; color: white !important; }
+    .dark .ts-dropdown .active { background-color: #374151 !important; }
+    .room-card.selected { border-color: #0ea5e9; ring: 4px; ring-color: #0ea5e9/20; }
 </style>
 @endsection
 
 @section('content')
-<div class="max-w-5xl mx-auto">
-    <div class="mb-6 flex items-center justify-between">
+<div class="max-w-7xl mx-auto space-y-8">
+    <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Create Booking</h1>
-            <p class="text-gray-500 dark:text-gray-400">Reserve rooms for your guests.</p>
+            <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">New Reservation</h1>
+            <p class="text-gray-500 dark:text-gray-400">Create a premium booking experience for your guests.</p>
         </div>
-        <a href="{{ route('booking.index') }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2">
+        <a href="{{ route('booking.index') }}" class="flex items-center gap-2 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
             <i data-lucide="arrow-left" class="w-5 h-5"></i>
-            Back to List
+            <span>Back to Bookings</span>
         </a>
     </div>
 
     <form action="{{ route('booking.store') }}" method="POST" id="bookingForm">
         @csrf
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left Column: Form Details -->
-            <div class="lg:col-span-2 space-y-6">
-                <x-card>
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label for="tanggal_checkin" class="text-sm font-bold text-gray-700 dark:text-gray-300">Check-in Date</label>
-                                <input type="date" name="tanggal_checkin" id="tanggal_checkin" value="{{ old('tanggal_checkin', date('Y-m-d')) }}"
-                                    class="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500" required>
-                                @error('tanggal_checkin') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-                            <div class="space-y-2">
-                                <label for="tanggal_checkout" class="text-sm font-bold text-gray-700 dark:text-gray-300">Check-out Date</label>
-                                <input type="date" name="tanggal_checkout" id="tanggal_checkout" value="{{ old('tanggal_checkout', date('Y-m-d', strtotime('+1 day'))) }}"
-                                    class="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500" required>
-                                @error('tanggal_checkout') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {{-- Form Section --}}
+            <div class="lg:col-span-8 space-y-8">
+                {{-- 1. Date & Guest Selection --}}
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-700">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center text-primary-600">
+                            <i data-lucide="user" class="w-5 h-5"></i>
                         </div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Guest Information</h2>
+                    </div>
 
-                        <div class="space-y-2">
-                            <label for="tamu_id" class="text-sm font-bold text-gray-700 dark:text-gray-300">Guest</label>
-                            <select name="tamu_id" id="tamu_select" required>
-                                <option data-placeholder="true"></option>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-sm font-bold text-gray-700 dark:text-gray-300">Select Guest</label>
+                            <select id="tamu_select" name="tamu_id" placeholder="Search by name, NIK, or phone..." required>
+                                <option value=""></option>
                                 @foreach($tamus as $tamu)
-                                    <option value="{{ $tamu->id }}" {{ old('tamu_id') == $tamu->id ? 'selected' : '' }}>
+                                    <option value="{{ $tamu->id }}"
+                                            data-nik="{{ $tamu->nik }}"
+                                            data-phone="{{ $tamu->no_hp }}"
+                                            data-email="{{ $tamu->email }}">
                                         {{ $tamu->nama_lengkap }} ({{ $tamu->nik }})
                                     </option>
                                 @endforeach
                             </select>
-                            <div class="mt-2 flex justify-end">
-                                <a href="{{ route('tamu.create') }}" class="text-xs text-primary-600 hover:underline flex items-center gap-1">
+                            <div class="flex justify-end">
+                                <a href="{{ route('tamu.create') }}" class="text-xs text-primary-600 hover:underline flex items-center gap-1 font-bold">
                                     <i data-lucide="plus-circle" class="w-3 h-3"></i> Add New Guest
                                 </a>
                             </div>
-                            @error('tamu_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <div class="space-y-2">
-                            <label for="kamar_ids" class="text-sm font-bold text-gray-700 dark:text-gray-300">Select Rooms</label>
-                            <select name="kamar_ids[]" id="kamar_select" multiple required>
-                                @foreach($kamars as $kamar)
-                                    <option value="{{ $kamar->id }}" {{ collect(old('kamar_ids'))->contains($kamar->id) ? 'selected' : '' }}>
-                                        Room {{ $kamar->nomor_kamar }} - {{ $kamar->tipeKamar->nama_tipe }} (Rp {{ number_format($kamar->tipeKamar->harga_per_malam) }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('kamar_ids') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            <label class="text-sm font-bold text-gray-700 dark:text-gray-300">Check-in</label>
+                            <input type="date" name="tanggal_checkin" id="tanggal_checkin" value="{{ date('Y-m-d') }}"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-gray-700 dark:text-gray-300">Check-out</label>
+                            <input type="date" name="tanggal_checkout" id="tanggal_checkout" value="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all" required>
                         </div>
                     </div>
-                </x-card>
+                </div>
 
-                <x-card title="Additional Information">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label for="jumlah_tamu" class="text-sm font-bold text-gray-700 dark:text-gray-300">Number of Guests</label>
-                            <input type="number" name="jumlah_tamu" id="jumlah_tamu" value="{{ old('jumlah_tamu', 1) }}" min="1"
-                                class="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500" required>
-                            @error('jumlah_tamu') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                {{-- 2. Room Selection Cards --}}
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-900/20 flex items-center justify-center text-primary-600">
+                                <i data-lucide="door-open" class="w-5 h-5"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Choose Your Rooms</h2>
                         </div>
-                        <div class="space-y-2">
-                            <label for="uang_muka" class="text-sm font-bold text-gray-700 dark:text-gray-300">Down Payment (DP)</label>
-                            <input type="number" name="uang_muka" id="uang_muka" value="{{ old('uang_muka', 0) }}" min="0"
-                                class="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500">
-                            @error('uang_muka') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
+                        <span id="roomsFound" class="text-sm text-gray-500 font-medium">0 rooms available</span>
                     </div>
-                    <div class="mt-6 space-y-2">
-                        <label for="catatan" class="text-sm font-bold text-gray-700 dark:text-gray-300">Notes</label>
-                        <textarea name="catatan" id="catatan" rows="3"
-                            class="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500">{{ old('catatan') }}</textarea>
+
+                    <div id="roomContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- Room cards will be rendered here by JS --}}
                     </div>
-                </x-card>
+
+                    {{-- Hidden input for selected rooms --}}
+                    <div id="selectedRoomsInputs"></div>
+                </div>
             </div>
 
-            <!-- Right Column: Summary -->
-            <div class="lg:col-span-1">
-                <div class="sticky top-6 space-y-6">
-                    <x-card title="Booking Summary">
-                        <div id="summaryContent" class="space-y-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-500">Duration</span>
-                                <span id="summaryDuration" class="font-bold text-gray-900 dark:text-white">0 Nights</span>
+            {{-- Summary Sidebar --}}
+            <div class="lg:col-span-4">
+                <div class="sticky top-8 space-y-6">
+                    <div class="bg-gray-900 dark:bg-gray-800 text-white p-8 rounded-3xl shadow-2xl">
+                        <h3 class="text-xl font-bold mb-8">Booking Summary</h3>
+
+                        <div class="space-y-6">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-400">Stay Duration</span>
+                                <span id="sumDuration" class="font-bold">0 Nights</span>
                             </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-500">Rooms</span>
-                                <span id="summaryRoomsCount" class="font-bold text-gray-900 dark:text-white">0 Selected</span>
+
+                            <div class="space-y-3" id="sumRoomList">
+                                {{-- Selected rooms list --}}
                             </div>
-                            <div class="border-t border-gray-100 dark:border-gray-700 pt-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-900 dark:text-white font-bold">Total Price</span>
-                                    <span id="summaryTotalPrice" class="text-xl font-bold text-primary-600">Rp 0</span>
+
+                            <div class="border-t border-gray-700 pt-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-gray-400 text-sm">Subtotal</span>
+                                    <span id="sumSubtotal" class="font-bold">Rp 0</span>
+                                </div>
+                                <div class="space-y-4">
+                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest">Down Payment (DP)</label>
+                                    <input type="number" name="uang_muka" id="uang_muka" value="0"
+                                        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-primary-500 transition-all outline-none">
                                 </div>
                             </div>
-                        </div>
-                        <button type="submit" class="w-full mt-6 px-6 py-3 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary-500/20">
-                            Confirm Booking
-                        </button>
-                    </x-card>
 
-                    <div id="roomPreviews" class="space-y-4">
-                        <!-- Room previews will be injected here -->
+                            <div class="pt-6 border-t border-gray-700">
+                                <div class="flex justify-between items-end">
+                                    <div>
+                                        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Total Price</p>
+                                        <p id="sumTotal" class="text-3xl font-black text-primary-500">Rp 0</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex justify-between text-sm">
+                                    <span class="text-gray-400">Remaining</span>
+                                    <span id="sumRemaining" class="font-bold text-amber-500">Rp 0</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4 pt-4">
+                                <div class="space-y-2">
+                                    <label class="text-sm font-bold text-gray-400">Additional Notes</label>
+                                    <textarea name="catatan" rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-300 outline-none focus:ring-1 focus:ring-primary-500"></textarea>
+                                </div>
+                                <input type="hidden" name="jumlah_tamu" value="2">
+                                <button type="submit" id="submitBtn" class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-black rounded-2xl transition-all transform active:scale-95 shadow-xl shadow-primary-500/20 flex items-center justify-center gap-3">
+                                    <span>Confirm Reservation</span>
+                                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Help Card --}}
+                    <div class="p-6 bg-primary-50 dark:bg-primary-900/10 border border-primary-100 dark:border-primary-900/30 rounded-3xl">
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 flex items-center justify-center text-primary-600 shrink-0">
+                                <i data-lucide="info" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-primary-900 dark:text-primary-400">Need Help?</p>
+                                <p class="text-xs text-primary-700 dark:text-primary-500/70 mt-1 leading-relaxed">Select your stay dates first to see live room availability and pricing.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,124 +170,178 @@
 @endsection
 
 @section('extra_js')
-<script src="https://cdn.jsdelivr.net/npm/slim-select@2.8.2/dist/slimselect.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const tamuSelect = new SlimSelect({
-            select: '#tamu_select',
-            settings: { placeholderText: 'Search for guest name or NIK...' }
-        });
-
-        const kamarSelect = new SlimSelect({
-            select: '#kamar_select',
-            settings: { placeholderText: 'Search for room number or type...' },
-            events: {
-                afterChange: (newVal) => {
-                    updateSummary();
-                    updateRoomPreviews();
+        // Initialize TomSelect for Guests with extended search
+        new TomSelect('#tamu_select', {
+            create: false,
+            valueField: 'value',
+            labelField: 'text',
+            searchField: ['text', 'nik', 'phone', 'email'],
+            options: Array.from(document.querySelectorAll('#tamu_select option')).map(opt => ({
+                value: opt.value,
+                text: opt.text,
+                nik: opt.dataset.nik,
+                phone: opt.dataset.phone,
+                email: opt.dataset.email
+            })),
+            render: {
+                option: function(data, escape) {
+                    return `<div>
+                        <div class="font-bold">${escape(data.text)}</div>
+                        <div class="text-xs text-gray-400">${escape(data.nik)} • ${escape(data.phone)}</div>
+                    </div>`;
+                },
+                item: function(data, escape) {
+                    return `<div>${escape(data.text)}</div>`;
                 }
             }
         });
 
         const checkinInput = document.getElementById('tanggal_checkin');
         const checkoutInput = document.getElementById('tanggal_checkout');
+        const dpInput = document.getElementById('uang_muka');
 
-        [checkinInput, checkoutInput].forEach(el => el.addEventListener('change', () => {
-            fetchAvailableRooms();
-            updateSummary();
-        }));
+        let allRooms = [];
+        let selectedRoomIds = new Set();
 
-        document.getElementById('uang_muka').addEventListener('input', updateSummary);
+        function fetchRooms() {
+            const ci = checkinInput.value;
+            const co = checkoutInput.value;
+            if (!ci || !co) return;
 
-        const kamarsData = @json($kamars);
-
-        function fetchAvailableRooms() {
-            const checkin = checkinInput.value;
-            const checkout = checkoutInput.value;
-            if (!checkin || !checkout) return;
-
-            fetch(`{{ route('booking.create') }}?checkin=${checkin}&checkout=${checkout}`, {
+            fetch(`{{ route('booking.create') }}?checkin=${ci}&checkout=${co}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
             .then(res => res.json())
             .then(data => {
-                const currentSelection = Array.from(document.getElementById('kamar_select').selectedOptions).map(o => o.value);
-                const options = data.map(k => ({
-                    text: `Room ${k.nomor_kamar} - ${k.tipe_kamar.nama_tipe} (Rp ${new Intl.NumberFormat().format(k.tipe_kamar.harga_per_malam)})`,
-                    value: k.id.toString(),
-                    selected: currentSelection.includes(k.id.toString())
-                }));
-                kamarSelect.setData(options);
+                allRooms = data;
+                renderRooms();
                 updateSummary();
             });
         }
 
-        function updateSummary() {
-            const checkin = new Date(checkinInput.value);
-            const checkout = new Date(checkoutInput.value);
-
-            // Set both to midnight to avoid DST issues
-            checkin.setHours(0, 0, 0, 0);
-            checkout.setHours(0, 0, 0, 0);
-
-            const diffTime = checkout - checkin;
-            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-            const duration = isNaN(diffDays) || diffDays <= 0 ? 0 : diffDays;
-            document.getElementById('summaryDuration').textContent = `${duration} Nights`;
-
-            const selectedOptions = Array.from(document.getElementById('kamar_select').selectedOptions);
-            document.getElementById('summaryRoomsCount').textContent = `${selectedOptions.length} Selected`;
-
-            let totalPrice = 0;
-            selectedOptions.forEach(option => {
-                const roomId = option.value;
-                const room = kamarsData.find(k => k.id == roomId);
-                if (room) {
-                    totalPrice += parseFloat(room.tipe_kamar.harga_per_malam) * duration;
-                }
-            });
-
-            document.getElementById('summaryTotalPrice').textContent = `Rp ${new Intl.NumberFormat('id-ID').format(totalPrice)}`;
-
-            // Real-time validation for DP
-            const dpInput = document.getElementById('uang_muka');
-            const dp = parseFloat(dpInput.value) || 0;
-            if (dp > totalPrice) {
-                dpInput.classList.add('border-red-500', 'ring-red-500');
-            } else {
-                dpInput.classList.remove('border-red-500', 'ring-red-500');
-            }
-        }
-
-        function updateRoomPreviews() {
-            const selectedRoomIds = Array.from(document.getElementById('kamar_select').selectedOptions).map(o => o.value);
-            const container = document.getElementById('roomPreviews');
+        function renderRooms() {
+            const container = document.getElementById('roomContainer');
+            const roomsFound = document.getElementById('roomsFound');
             container.innerHTML = '';
+            roomsFound.textContent = `${allRooms.length} rooms available`;
 
-            selectedRoomIds.forEach(id => {
-                const room = kamarsData.find(k => k.id == id);
-                if (room) {
-                    const imageUrl = room.images && room.images.length > 0
-                        ? `/storage/${room.images[0]}`
-                        : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';
+            allRooms.forEach(room => {
+                const isSelected = selectedRoomIds.has(room.id.toString());
+                const img = room.images && room.images.length > 0 ? `/storage/${room.images[0]}` : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
 
-                    const card = `
-                        <div class="flex gap-4 p-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-sm animate-fade-in">
-                            <img src="${imageUrl}" class="w-16 h-16 object-cover rounded-lg">
-                            <div class="flex-1">
-                                <p class="text-sm font-bold text-gray-900 dark:text-white">Room ${room.nomor_kamar}</p>
-                                <p class="text-[10px] text-gray-500">${room.tipe_kamar.nama_tipe} • Max ${room.tipe_kamar.kapasitas} Pax</p>
-                                <p class="text-xs font-bold text-primary-600 mt-1">Rp ${new Intl.NumberFormat('id-ID').format(room.tipe_kamar.harga_per_malam)}/night</p>
+                const card = `
+                    <div class="room-card group cursor-pointer bg-white dark:bg-gray-800 border-2 rounded-3xl overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 ${isSelected ? 'border-primary-500 ring-4 ring-primary-500/10' : 'border-gray-100 dark:border-gray-700'}"
+                         onclick="toggleRoom('${room.id}')">
+                        <div class="relative h-48">
+                            <img src="${img}" class="w-full h-full object-cover">
+                            <div class="absolute top-4 right-4">
+                                <span class="px-3 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur text-[10px] font-black uppercase tracking-widest rounded-full text-gray-900 dark:text-white border border-white/20">Lvl ${room.lantai}</span>
+                            </div>
+                            <div class="absolute bottom-4 left-4">
+                                <span class="px-3 py-1 bg-green-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">Available</span>
                             </div>
                         </div>
-                    `;
-                    container.insertAdjacentHTML('beforeend', card);
-                }
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-black text-gray-900 dark:text-white">Room ${room.nomor_kamar}</h3>
+                                <p class="text-primary-600 font-bold">Rp ${new Intl.NumberFormat('id-ID').format(room.tipe_kamar.harga_per_malam)}</p>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-4">${room.tipe_kamar.nama_tipe}</p>
+
+                            <div class="flex flex-wrap gap-2">
+                                <span class="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                                    <i data-lucide="users" class="w-3 h-3"></i> ${room.tipe_kamar.kapasitas} Pax
+                                </span>
+                                ${room.tipe_kamar.fasilitas ? room.tipe_kamar.fasilitas.slice(0, 2).map(f => `
+                                    <span class="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                                        <i data-lucide="check" class="w-3 h-3 text-primary-500"></i> ${f}
+                                    </span>
+                                `).join('') : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', card);
+            });
+            lucide.createIcons();
+        }
+
+        window.toggleRoom = function(id) {
+            if (selectedRoomIds.has(id)) {
+                selectedRoomIds.delete(id);
+            } else {
+                selectedRoomIds.add(id);
+            }
+            renderRooms();
+            updateSummary();
+            updateHiddenInputs();
+        };
+
+        function updateHiddenInputs() {
+            const container = document.getElementById('selectedRoomsInputs');
+            container.innerHTML = '';
+            selectedRoomIds.forEach(id => {
+                container.insertAdjacentHTML('beforeend', `<input type="hidden" name="kamar_ids[]" value="${id}">`);
             });
         }
 
-        updateSummary();
+        function updateSummary() {
+            const ci = new Date(checkinInput.value);
+            const co = new Date(checkoutInput.value);
+            ci.setHours(0,0,0,0);
+            co.setHours(0,0,0,0);
+
+            const diff = co - ci;
+            const nights = Math.round(diff / (1000 * 60 * 60 * 24));
+            const duration = nights > 0 ? nights : 0;
+
+            document.getElementById('sumDuration').textContent = `${duration} Nights`;
+
+            const sumRoomList = document.getElementById('sumRoomList');
+            sumRoomList.innerHTML = '';
+
+            let subtotal = 0;
+            selectedRoomIds.forEach(id => {
+                const room = allRooms.find(r => r.id == id);
+                if (room) {
+                    const price = parseFloat(room.tipe_kamar.harga_per_malam);
+                    subtotal += price * duration;
+
+                    sumRoomList.insertAdjacentHTML('beforeend', `
+                        <div class="flex justify-between text-xs animate-fade-in">
+                            <span class="text-gray-400">Room ${room.nomor_kamar} x ${duration}</span>
+                            <span class="text-white font-medium">Rp ${new Intl.NumberFormat('id-ID').format(price * duration)}</span>
+                        </div>
+                    `);
+                }
+            });
+
+            const dp = parseFloat(dpInput.value) || 0;
+            const remaining = subtotal - dp;
+
+            document.getElementById('sumSubtotal').textContent = `Rp ${new Intl.NumberFormat('id-ID').format(subtotal)}`;
+            document.getElementById('sumTotal').textContent = `Rp ${new Intl.NumberFormat('id-ID').format(subtotal)}`;
+            document.getElementById('sumRemaining').textContent = `Rp ${new Intl.NumberFormat('id-ID').format(remaining < 0 ? 0 : remaining)}`;
+
+            // Validation visuals
+            if (dp > subtotal && subtotal > 0) {
+                dpInput.classList.add('border-red-500', 'text-red-500');
+            } else {
+                dpInput.classList.remove('border-red-500', 'text-red-500');
+            }
+
+            document.getElementById('submitBtn').disabled = selectedRoomIds.size === 0 || duration === 0 || (dp > subtotal && subtotal > 0);
+            document.getElementById('submitBtn').style.opacity = (selectedRoomIds.size === 0 || duration === 0) ? '0.5' : '1';
+        }
+
+        checkinInput.addEventListener('change', fetchRooms);
+        checkoutInput.addEventListener('change', fetchRooms);
+        dpInput.addEventListener('input', updateSummary);
+
+        fetchRooms();
     });
 </script>
 @endsection

@@ -50,9 +50,16 @@
                             @can('cancel', $booking)
                             <form action="{{ route('booking.cancel', $booking) }}" method="POST" onsubmit="return confirm('Cancel this booking?')">
                                 @csrf
-                                <button class="text-red-600 hover:text-red-700"><i data-lucide="x-circle" class="w-5 h-5"></i></button>
+                                <button class="text-amber-600 hover:text-amber-700" title="Cancel Booking"><i data-lucide="x-circle" class="w-5 h-5"></i></button>
                             </form>
                             @endcan
+
+                            @if($booking->status === 'cancelled' && auth()->user()->isAdmin())
+                            <form action="{{ route('booking.destroy', $booking) }}" method="POST" onsubmit="return confirm('Delete this booking permanently?')">
+                                @csrf @method('DELETE')
+                                <button class="text-red-600 hover:text-red-700" title="Delete Booking"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                            </form>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
