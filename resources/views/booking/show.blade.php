@@ -3,25 +3,28 @@
 @section('title', 'Booking Details - ' . $booking->kode_booking)
 
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="max-w-6xl mx-auto space-y-8">
     <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('booking.index') }}" class="p-2 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                <i data-lucide="arrow-left" class="w-5 h-5 text-gray-500"></i>
+        <div class="flex items-center gap-6">
+            <a href="{{ route('booking.index') }}" class="p-3 bg-white dark:bg-slate-850 border border-gray-200 dark:border-slate-800 rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-800 transition-all shadow-sm group">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400 group-hover:text-primary-600 transition-colors"></i>
             </a>
-            <h1 class="text-2xl font-bold text-gray-900">Booking Details</h1>
+            <div>
+                <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Booking Dossier</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Detailed itinerary and financial summary for reservation #{{ $booking->kode_booking }}</p>
+            </div>
         </div>
         <div class="flex items-center gap-3">
             @can('update', $booking)
-                <a href="{{ route('booking.edit', $booking) }}" class="px-4 py-2 bg-amber-50 text-amber-700 font-bold rounded-xl hover:bg-amber-100 transition-colors border border-amber-200">Edit Booking</a>
+                <a href="{{ route('booking.edit', $booking) }}" class="px-5 py-2.5 bg-white dark:bg-slate-850 text-amber-600 dark:text-amber-400 font-black rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all border border-amber-100 dark:border-amber-900/30 text-xs uppercase tracking-widest shadow-sm">Refine Reservation</a>
             @endcan
             @if($booking->status === 'confirmed')
                 <form action="{{ route('checkin.proses', $booking) }}" method="POST">
                     @csrf
-                    <button type="submit" class="px-4 py-2 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors">Process Check-In</button>
+                    <button type="submit" class="px-5 py-2.5 bg-primary-600 text-white font-black rounded-xl hover:bg-primary-700 transition-all shadow-lg shadow-primary-500/20 text-xs uppercase tracking-widest transform active:scale-95">Authorize Check-In</button>
                 </form>
             @elseif($booking->status === 'checkin')
-                <a href="{{ route('checkout.show', $booking) }}" class="px-4 py-2 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-700 transition-colors">Process Check-Out</a>
+                <a href="{{ route('checkout.show', $booking) }}" class="px-5 py-2.5 bg-orange-600 text-white font-black rounded-xl hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/20 text-xs uppercase tracking-widest transform active:scale-95">Initiate Departure</a>
             @endif
         </div>
     </div>

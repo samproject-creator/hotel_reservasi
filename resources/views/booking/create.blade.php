@@ -56,7 +56,7 @@
                             </select>
                             <div class="flex justify-end">
                                 <a href="{{ route('tamu.create') }}" class="text-xs text-primary-600 hover:underline flex items-center gap-1 font-bold">
-                                    <i data-lucide="plus-circle" class="w-3 h-3"></i> Add New Guest
+                                    <i data-lucide="plus-circle" class="w-3 h-3 text-accent-gold"></i> Add New Guest
                                 </a>
                             </div>
                         </div>
@@ -144,7 +144,7 @@
                                 <input type="hidden" name="jumlah_tamu" value="2">
                                 <button type="submit" id="submitBtn" class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-black rounded-2xl transition-all transform active:scale-95 shadow-xl shadow-primary-500/20 flex items-center justify-center gap-3">
                                     <span>Confirm Reservation</span>
-                                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                                    <i data-lucide="chevron-right" class="w-5 h-5 text-accent-gold"></i>
                                 </button>
                             </div>
                         </div>

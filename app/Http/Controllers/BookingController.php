@@ -112,22 +112,7 @@ class BookingController extends Controller
             $checkout = $request->input('tanggal_checkout', $booking->tanggal_checkout);
             $kamarIds = $request->input('kamar_ids', $booking->kamars->pluck('id')->toArray());
 
-            // Temporary detach rooms to check availability correctly
-            $currentRooms = $booking->kamars->pluck('id')->toArray();
-
-            // Availability check excluding current booking
-            $overlapping = Booking::where('id', '!=', $booking->id)
-                ->whereHas('kamars', function ($query) use ($kamarIds) {
-                    $query->whereIn('kamars.id', $kamarIds);
-                })
-                ->where(function ($query) use ($checkin, $checkout) {
-                    $query->where('tanggal_checkin', '<', $checkout)
-                          ->where('tanggal_checkout', '>', $checkin);
-                })
-                ->whereNotIn('status', ['cancelled', 'checkout'])
-                ->exists();
-
-            if ($overlapping) {
+            if (!$this->bookingService->checkAvailability($kamarIds, $checkin, $checkout, $booking->id)) {
                 return back()->with('error', 'Satu atau lebih kamar tidak tersedia untuk jadwal baru ini.');
             }
         }

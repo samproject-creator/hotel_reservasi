@@ -82,7 +82,7 @@ class BookingService
         }
     }
 
-    public function checkAvailability($kamarIds, $checkin, $checkout)
+    public function checkAvailability($kamarIds, $checkin, $checkout, $excludeBookingId = null)
     {
         // Check if rooms are not in 'maintenance'
         $availableRooms = Kamar::whereIn('id', $kamarIds)
@@ -94,16 +94,19 @@ class BookingService
         }
 
         // Check for overlapping bookings
-        $overlappingBookings = Booking::whereHas('kamars', function ($query) use ($kamarIds) {
-            $query->whereIn('kamars.id', $kamarIds);
+        $query = Booking::whereHas('kamars', function ($q) use ($kamarIds) {
+            $q->whereIn('kamars.id', $kamarIds);
         })
-        ->where(function ($query) use ($checkin, $checkout) {
-            $query->where('tanggal_checkin', '<', $checkout)
-                  ->where('tanggal_checkout', '>', $checkin);
+        ->where(function ($q) use ($checkin, $checkout) {
+            $q->where('tanggal_checkin', '<', $checkout)
+              ->where('tanggal_checkout', '>', $checkin);
         })
-        ->whereNotIn('status', ['cancelled', 'checkout'])
-        ->exists();
+        ->whereNotIn('status', ['cancelled', 'checkout']);
 
-        return !$overlappingBookings;
+        if ($excludeBookingId) {
+            $query->where('id', '!=', $excludeBookingId);
+        }
+
+        return !$query->exists();
     }
 }

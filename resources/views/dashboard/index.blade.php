@@ -50,98 +50,113 @@
 @endpush
 
 @section('content')
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <div class="text-sm text-gray-500">{{ now()->format('l, d F Y') }}</div>
+<div class="space-y-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Dashboard Overview</h1>
+            <p class="text-gray-500 dark:text-gray-400 font-medium">Welcome back to LuxeHotel Management System.</p>
+        </div>
+        <div class="px-4 py-2 bg-white dark:bg-slate-850 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 text-sm font-bold text-gray-600 dark:text-gray-400 flex items-center gap-2">
+            <i data-lucide="calendar" class="w-4 h-4 text-accent-gold"></i>
+            {{ now()->format('l, d F Y') }}
+        </div>
     </div>
 
     {{-- Stats Grid --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div class="bg-blue-50 p-3 rounded-xl text-blue-600">
-                <i data-lucide="door-open" class="w-6 h-6"></i>
+        <div class="bg-white dark:bg-slate-850 p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col gap-4 relative overflow-hidden group">
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl text-blue-600 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="door-open" class="w-8 h-8"></i>
             </div>
             <div>
-                <p class="text-sm text-gray-500 font-medium">Available Rooms</p>
-                <p class="text-2xl font-bold text-gray-900">{{ $kamarTersedia }} / {{ $totalKamar }}</p>
+                <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Available Rooms</p>
+                <p class="text-3xl font-black text-gray-900 dark:text-white mt-1">{{ $kamarTersedia }} <span class="text-lg text-gray-400 font-bold">/ {{ $totalKamar }}</span></p>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <i data-lucide="door-open" class="w-32 h-32"></i>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div class="bg-orange-50 p-3 rounded-xl text-orange-600">
-                <i data-lucide="calendar-days" class="w-6 h-6"></i>
+        <div class="bg-white dark:bg-slate-850 p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col gap-4 relative overflow-hidden group">
+            <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl text-orange-600 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="calendar-days" class="w-8 h-8"></i>
             </div>
             <div>
-                <p class="text-sm text-gray-500 font-medium">New Bookings</p>
-                <p class="text-2xl font-bold text-gray-900">{{ $bookingHariIni }}</p>
+                <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">New Bookings</p>
+                <p class="text-3xl font-black text-gray-900 dark:text-white mt-1">{{ $bookingHariIni }}</p>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <i data-lucide="calendar-days" class="w-32 h-32"></i>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div class="bg-green-50 p-3 rounded-xl text-green-600">
-                <i data-lucide="wallet" class="w-6 h-6"></i>
+        <div class="bg-white dark:bg-slate-850 p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col gap-4 relative overflow-hidden group">
+            <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-2xl text-green-600 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="wallet" class="w-8 h-8"></i>
             </div>
             <div>
-                <p class="text-sm text-gray-500 font-medium">Monthly Revenue</p>
-                <p class="text-2xl font-bold text-gray-900">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</p>
+                <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Monthly Revenue</p>
+                <p class="text-3xl font-black text-gray-900 dark:text-white mt-1">Rp {{ number_format($pendapatanBulanIni, 0, ',', '.') }}</p>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <i data-lucide="wallet" class="w-32 h-32"></i>
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div class="bg-purple-50 p-3 rounded-xl text-purple-600">
-                <i data-lucide="users" class="w-6 h-6"></i>
+        <div class="bg-white dark:bg-slate-850 p-8 rounded-[2rem] shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col gap-4 relative overflow-hidden group">
+            <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-2xl text-purple-600 w-fit group-hover:scale-110 transition-transform">
+                <i data-lucide="users" class="w-8 h-8"></i>
             </div>
             <div>
-                <p class="text-sm text-gray-500 font-medium">Total Guests</p>
-                <p class="text-2xl font-bold text-gray-900">{{ $totalTamu }}</p>
+                <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Total Guests</p>
+                <p class="text-3xl font-black text-gray-900 dark:text-white mt-1">{{ $totalTamu }}</p>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <i data-lucide="users" class="w-32 h-32"></i>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {{-- Charts --}}
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h2 class="font-bold text-gray-900 mb-4">Booking Trends</h2>
+        <x-card title="Booking Trends">
             <canvas id="bookingChart" height="200"></canvas>
-        </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h2 class="font-bold text-gray-900 mb-4">Revenue Growth</h2>
+        </x-card>
+        <x-card title="Revenue Growth">
             <canvas id="revenueChart" height="200"></canvas>
-        </div>
+        </x-card>
 
         {{-- Recent Bookings --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="p-6 border-b border-gray-50 flex items-center justify-between">
-                <h2 class="font-bold text-gray-900">Recent Bookings</h2>
-                <a href="{{ route('booking.index') }}" class="text-sm text-primary-600 font-semibold hover:text-primary-700">View All</a>
-            </div>
-            <div class="overflow-x-auto">
+        <x-card title="Recent Bookings">
+            <x-slot name="action">
+                <a href="{{ route('booking.index') }}" class="text-xs font-black text-primary-600 uppercase tracking-widest hover:underline">View All</a>
+            </x-slot>
+            <div class="overflow-x-auto -mx-8 -mb-8">
                 <table class="w-full text-left">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gray-50 dark:bg-slate-800/50">
                         <tr>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Guest</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Guest</th>
+                            <th class="px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Date</th>
+                            <th class="px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest text-right">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-gray-100 dark:divide-slate-800">
                         @foreach($bookingTerbaru as $booking)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <p class="text-sm font-semibold text-gray-900">{{ $booking->tamu->nama_lengkap }}</p>
-                                <p class="text-xs text-gray-500">{{ $booking->kode_booking }}</p>
+                        <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/30 transition-colors">
+                            <td class="px-8 py-5">
+                                <p class="text-sm font-black text-gray-900 dark:text-white leading-tight">{{ $booking->tamu->nama_lengkap }}</p>
+                                <p class="text-[10px] text-gray-400 dark:text-gray-500 font-bold mt-0.5 tracking-wider uppercase">{{ $booking->kode_booking }}</p>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-600">
+                            <td class="px-8 py-5 text-xs font-bold text-gray-600 dark:text-gray-400">
                                 {{ \Carbon\Carbon::parse($booking->tanggal_checkin)->format('d M') }} - {{ \Carbon\Carbon::parse($booking->tanggal_checkout)->format('d M') }}
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider
-                                    {{ $booking->status === 'confirmed' ? 'bg-blue-50 text-blue-700' : '' }}
-                                    {{ $booking->status === 'checkin' ? 'bg-orange-50 text-orange-700' : '' }}
-                                    {{ $booking->status === 'checkout' ? 'bg-green-50 text-green-700' : '' }}
-                                    {{ $booking->status === 'cancelled' ? 'bg-red-50 text-red-700' : '' }}
-                                    {{ $booking->status === 'pending' ? 'bg-gray-100 text-gray-600' : '' }}
+                            <td class="px-8 py-5 text-right">
+                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest
+                                    {{ $booking->status === 'confirmed' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400' : '' }}
+                                    {{ $booking->status === 'checkin' ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400' : '' }}
+                                    {{ $booking->status === 'checkout' ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400' : '' }}
+                                    {{ $booking->status === 'cancelled' ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400' : '' }}
+                                    {{ $booking->status === 'pending' ? 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-500' : '' }}
                                 ">
                                     {{ $booking->status }}
                                 </span>
@@ -151,30 +166,37 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </x-card>
 
-        {{-- Quick Actions / Status Room --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="font-bold text-gray-900 mb-6">Quick Actions</h2>
+        {{-- Quick Actions --}}
+        <x-card title="Management Hub">
             <div class="grid grid-cols-2 gap-4">
-                <a href="{{ route('booking.create') }}" class="p-4 bg-primary-50 rounded-xl flex flex-col items-center gap-2 text-primary-700 hover:bg-primary-100 transition-colors">
-                    <i data-lucide="plus-circle" class="w-8 h-8"></i>
-                    <span class="text-sm font-bold">New Booking</span>
+                <a href="{{ route('booking.create') }}" class="group p-6 bg-primary-50 dark:bg-blue-900/10 rounded-3xl flex flex-col items-center gap-3 text-primary-700 dark:text-blue-400 hover:bg-primary-600 hover:text-white transition-all">
+                    <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl group-hover:bg-primary-500 group-hover:text-white transition-colors shadow-sm">
+                        <i data-lucide="plus-circle" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-black uppercase tracking-widest">New Booking</span>
                 </a>
-                <a href="{{ route('tamu.create') }}" class="p-4 bg-green-50 rounded-xl flex flex-col items-center gap-2 text-green-700 hover:bg-green-100 transition-colors">
-                    <i data-lucide="user-plus" class="w-8 h-8"></i>
-                    <span class="text-sm font-bold">Add Guest</span>
+                <a href="{{ route('tamu.create') }}" class="group p-6 bg-green-50 dark:bg-green-900/10 rounded-3xl flex flex-col items-center gap-3 text-green-700 dark:text-green-400 hover:bg-green-600 hover:text-white transition-all">
+                    <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl group-hover:bg-green-500 group-hover:text-white transition-colors shadow-sm">
+                        <i data-lucide="user-plus" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-black uppercase tracking-widest">Add Guest</span>
                 </a>
-                <a href="{{ route('checkin.index') }}" class="p-4 bg-orange-50 rounded-xl flex flex-col items-center gap-2 text-orange-700 hover:bg-orange-100 transition-colors">
-                    <i data-lucide="log-in" class="w-8 h-8"></i>
-                    <span class="text-sm font-bold">Check-In</span>
+                <a href="{{ route('checkin.index') }}" class="group p-6 bg-orange-50 dark:bg-orange-900/10 rounded-3xl flex flex-col items-center gap-3 text-orange-700 dark:text-orange-400 hover:bg-orange-600 hover:text-white transition-all">
+                    <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl group-hover:bg-orange-500 group-hover:text-white transition-colors shadow-sm">
+                        <i data-lucide="log-in" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-black uppercase tracking-widest">Check-In</span>
                 </a>
-                <a href="{{ route('laporan.index') }}" class="p-4 bg-purple-50 rounded-xl flex flex-col items-center gap-2 text-purple-700 hover:bg-purple-100 transition-colors">
-                    <i data-lucide="file-bar-chart" class="w-8 h-8"></i>
-                    <span class="text-sm font-bold">Reports</span>
+                <a href="{{ route('laporan.index') }}" class="group p-6 bg-purple-50 dark:bg-purple-900/10 rounded-3xl flex flex-col items-center gap-3 text-purple-700 dark:text-purple-400 hover:bg-purple-600 hover:text-white transition-all">
+                    <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl group-hover:bg-purple-500 group-hover:text-white transition-colors shadow-sm">
+                        <i data-lucide="file-bar-chart" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-black uppercase tracking-widest">Reports</span>
                 </a>
             </div>
-        </div>
+        </x-card>
     </div>
 </div>
 @endsection

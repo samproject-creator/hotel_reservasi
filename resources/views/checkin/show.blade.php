@@ -3,13 +3,16 @@
 @section('title', 'Check-In Details - ' . $booking->kode_booking)
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="max-w-4xl mx-auto space-y-8">
     <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('checkin.index') }}" class="p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <i data-lucide="arrow-left" class="w-5 h-5 text-gray-500"></i>
+        <div class="flex items-center gap-6">
+            <a href="{{ route('checkin.index') }}" class="p-3 bg-white dark:bg-slate-850 border border-gray-200 dark:border-slate-800 rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-800 transition-all shadow-sm group">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400 group-hover:text-primary-600 transition-colors"></i>
             </a>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Check-In Details</h1>
+            <div>
+                <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Access Verification</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Validation of authorized stay for reservation #{{ $booking->kode_booking }}</p>
+            </div>
         </div>
     </div>
 
