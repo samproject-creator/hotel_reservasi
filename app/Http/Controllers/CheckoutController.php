@@ -71,10 +71,10 @@ class CheckoutController extends Controller
         }
 
         if ($booking->tamu && $booking->tamu->no_hp) {
-            $pesanWa = "Halo " . $booking->tamu->nama_lengkap . ",\n\n" .
+            $pesanWa = "Yth. Bapak/Ibu " . $booking->tamu->nama_lengkap . ",\n\n" .
                        "Proses Check-out Anda dengan Kode Booking *" . $booking->kode_booking . "* telah BERHASIL.\n" .
                        "Status Tagihan: *LUNAS*\n\n" .
-                       "Terima kasih telah menginap di LuxeHotel!";
+                       "Terima kasih telah menginap di LuxeHotel. Kami menantikan kunjungan Anda kembali!";
 
             $fonnte->sendMessage($booking->tamu->no_hp, $pesanWa);
         }

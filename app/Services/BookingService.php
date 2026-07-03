@@ -20,25 +20,7 @@ class BookingService
     public function createBooking(array $data)
     {
         $booking = DB::transaction(function () use ($data) {
-            $checkin  = \Carbon\Carbon::parse($data['tanggal_checkin']);
-            $checkout = \Carbon\Carbon::parse($data['tanggal_checkout']);
-            $malam    = $checkin->diffInDays($checkout);
-
-            $totalHarga = 0;
-            $kamarData  = [];
-
-            foreach ($data['kamar_ids'] as $kamarId) {
-                $kamar       = Kamar::with('tipeKamar')->findOrFail($kamarId);
-                $harga       = $kamar->tipeKamar->harga_per_malam;
-                $subtotal    = $harga * $malam;
-                $totalHarga += $subtotal;
-
-                $kamarData[$kamarId] = [
-                    'harga_malam'  => $harga,
-                    'jumlah_malam' => $malam,
-                    'subtotal'     => $subtotal,
-                ];
-            }
+            $calc = $this->calculateTotal($data['kamar_ids'], $data['tanggal_checkin'], $data['tanggal_checkout']);
 
             $booking = Booking::create([
                 'kode_booking'     => Booking::generateKode(),
@@ -48,12 +30,12 @@ class BookingService
                 'tanggal_checkout' => $data['tanggal_checkout'],
                 'jumlah_tamu'      => $data['jumlah_tamu'],
                 'status'           => 'confirmed',
-                'total_harga'      => $totalHarga,
+                'total_harga'      => $calc['total_harga'],
                 'uang_muka'        => $data['uang_muka'] ?? 0,
                 'catatan'          => $data['catatan'] ?? null,
             ]);
 
-            $booking->kamars()->attach($kamarData);
+            $booking->kamars()->attach($calc['kamar_data']);
 
             return $booking;
         });
@@ -64,12 +46,72 @@ class BookingService
         return $booking;
     }
 
+    public function updateBooking(Booking $booking, array $data)
+    {
+        return DB::transaction(function () use ($booking, $data) {
+            $checkin  = $data['tanggal_checkin'] ?? $booking->tanggal_checkin;
+            $checkout = $data['tanggal_checkout'] ?? $booking->tanggal_checkout;
+            $kamarIds = $data['kamar_ids'] ?? $booking->kamars->pluck('id')->toArray();
+
+            $calc = $this->calculateTotal($kamarIds, $checkin, $checkout);
+
+            $booking->update([
+                'tanggal_checkin'  => $checkin,
+                'tanggal_checkout' => $checkout,
+                'jumlah_tamu'      => $data['jumlah_tamu'] ?? $booking->jumlah_tamu,
+                'total_harga'      => $calc['total_harga'],
+                'uang_muka'        => $data['uang_muka'] ?? $booking->uang_muka,
+                'catatan'          => $data['catatan'] ?? $booking->catatan,
+            ]);
+
+            $booking->kamars()->sync($calc['kamar_data']);
+
+            return $booking;
+        });
+    }
+
+    protected function calculateTotal(array $kamarIds, $checkinDate, $checkoutDate)
+    {
+        $checkin  = \Carbon\Carbon::parse($checkinDate);
+        $checkout = \Carbon\Carbon::parse($checkoutDate);
+        $malam    = max(1, $checkin->diffInDays($checkout));
+
+        $totalHarga = 0;
+        $kamarData  = [];
+
+        foreach ($kamarIds as $kamarId) {
+            $kamar       = Kamar::with('tipeKamar')->findOrFail($kamarId);
+            $harga       = $kamar->tipeKamar->harga_per_malam;
+            $subtotal    = $harga * $malam;
+            $totalHarga += $subtotal;
+
+            $kamarData[$kamarId] = [
+                'harga_malam'  => $harga,
+                'jumlah_malam' => $malam,
+                'subtotal'     => $subtotal,
+            ];
+        }
+
+        return [
+            'total_harga' => $totalHarga,
+            'kamar_data'  => $kamarData,
+        ];
+    }
+
     protected function notifyBookingConfirmed(Booking $booking)
     {
         $booking->load('tamu');
 
+        $ci = \Carbon\Carbon::parse($booking->tanggal_checkin)->format('d F Y');
+        $co = \Carbon\Carbon::parse($booking->tanggal_checkout)->format('d F Y');
+
         // WhatsApp Notification
-        $message = "Halo {$booking->tamu->nama_lengkap},\n\nBooking Anda di LuxeHotel telah DIKONFIRMASI!\nKode Booking: {$booking->kode_booking}\nCheck-in: {$booking->tanggal_checkin}\nCheck-out: {$booking->tanggal_checkout}\n\nTerima kasih.";
+        $message = "Yth. Bapak/Ibu {$booking->tamu->nama_lengkap},\n\n" .
+                   "Booking Anda di LuxeHotel telah DIKONFIRMASI.\n" .
+                   "Kode Booking: {$booking->kode_booking}\n" .
+                   "Check-in: {$ci}\n" .
+                   "Check-out: {$co}\n\n" .
+                   "Terima kasih telah memilih layanan kami.";
         $this->fonnte->sendMessage($booking->tamu->no_hp, $message);
 
         // Email Notification

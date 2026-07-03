@@ -4,11 +4,21 @@
 
 @section('extra_css')
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-dark-theme" disabled>
 <style>
     .ts-control { border-radius: 0.75rem !important; padding: 0.6rem 1rem !important; }
     .dark .ts-control { background-color: #1f2937 !important; color: white !important; border-color: #374151 !important; }
-    .dark .ts-dropdown { background-color: #1f2937 !important; color: white !important; }
-    .dark .ts-dropdown .active { background-color: #374151 !important; }
+    .dark .ts-dropdown { background-color: #1f2937 !important; color: white !important; border-color: #374151 !important; }
+    .dark .ts-dropdown .option,
+    .dark .ts-dropdown .item,
+    .dark .ts-dropdown .optgroup-header,
+    .dark .ts-dropdown .no-results,
+    .dark .ts-dropdown .create {
+        background-color: #1f2937 !important;
+        color: white !important;
+    }
+    .dark .ts-dropdown .active { background-color: #374151 !important; color: white !important; }
     .room-card.selected { border-color: #0ea5e9; ring: 4px; ring-color: #0ea5e9/20; }
 </style>
 @endsection
@@ -63,13 +73,13 @@
 
                         <div class="space-y-2">
                             <label class="text-sm font-bold text-gray-700 dark:text-gray-300">Check-in</label>
-                            <input type="date" name="tanggal_checkin" id="tanggal_checkin" value="{{ date('Y-m-d') }}"
-                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all" required>
+                            <input type="text" name="tanggal_checkin" id="tanggal_checkin" value="{{ date('Y-m-d') }}"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all datepicker" required>
                         </div>
                         <div class="space-y-2">
                             <label class="text-sm font-bold text-gray-700 dark:text-gray-300">Check-out</label>
-                            <input type="date" name="tanggal_checkout" id="tanggal_checkout" value="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all" required>
+                            <input type="text" name="tanggal_checkout" id="tanggal_checkout" value="{{ date('Y-m-d', strtotime('+1 day')) }}"
+                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl dark:text-white focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 transition-all datepicker" required>
                         </div>
                     </div>
                 </div>
@@ -138,10 +148,14 @@
 
                             <div class="space-y-4 pt-4">
                                 <div class="space-y-2">
+                                    <label class="text-sm font-bold text-gray-400">Number of Guests</label>
+                                    <input type="number" name="jumlah_tamu" value="2" min="1"
+                                        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-primary-500 transition-all outline-none">
+                                </div>
+                                <div class="space-y-2">
                                     <label class="text-sm font-bold text-gray-400">Additional Notes</label>
                                     <textarea name="catatan" rows="2" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-300 outline-none focus:ring-1 focus:ring-primary-500"></textarea>
                                 </div>
-                                <input type="hidden" name="jumlah_tamu" value="2">
                                 <button type="submit" id="submitBtn" class="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-black rounded-2xl transition-all transform active:scale-95 shadow-xl shadow-primary-500/20 flex items-center justify-center gap-3">
                                     <span>Confirm Reservation</span>
                                     <i data-lucide="chevron-right" class="w-5 h-5 text-accent-gold"></i>
@@ -171,8 +185,28 @@
 
 @section('extra_js')
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const checkinInput = document.getElementById('tanggal_checkin');
+        const checkoutInput = document.getElementById('tanggal_checkout');
+        const dpInput = document.getElementById('uang_muka');
+
+        // Initialize Flatpickr for ID format
+        const fpConfig = {
+            altInput: true,
+            altFormat: "d/m/Y",
+            dateFormat: "Y-m-d",
+            locale: "id",
+            onChange: function() {
+                fetchRooms();
+                updateSummary();
+            }
+        };
+        flatpickr("#tanggal_checkin", fpConfig);
+        flatpickr("#tanggal_checkout", fpConfig);
+
         // Initialize TomSelect for Guests with extended search
         new TomSelect('#tamu_select', {
             create: false,
@@ -198,10 +232,6 @@
                 }
             }
         });
-
-        const checkinInput = document.getElementById('tanggal_checkin');
-        const checkoutInput = document.getElementById('tanggal_checkout');
-        const dpInput = document.getElementById('uang_muka');
 
         let allRooms = [];
         let selectedRoomIds = new Set();
@@ -230,37 +260,30 @@
 
             allRooms.forEach(room => {
                 const isSelected = selectedRoomIds.has(room.id.toString());
-                const img = room.images && room.images.length > 0 ? `/storage/${room.images[0]}` : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
 
                 const card = `
-                    <div class="room-card group cursor-pointer bg-white dark:bg-gray-800 border-2 rounded-3xl overflow-hidden transition-all hover:shadow-2xl hover:-translate-y-1 ${isSelected ? 'border-primary-500 ring-4 ring-primary-500/10' : 'border-gray-100 dark:border-gray-700'}"
+                    <div class="room-card group cursor-pointer bg-white dark:bg-gray-800 border-2 rounded-2xl p-5 transition-all hover:shadow-lg ${isSelected ? 'border-primary-500 ring-4 ring-primary-500/10' : 'border-gray-100 dark:border-gray-700'}"
                          onclick="toggleRoom('${room.id}')">
-                        <div class="relative h-48">
-                            <img src="${img}" class="w-full h-full object-cover">
-                            <div class="absolute top-4 right-4">
-                                <span class="px-3 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur text-[10px] font-black uppercase tracking-widest rounded-full text-gray-900 dark:text-white border border-white/20">Lvl ${room.lantai}</span>
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-black text-gray-900 dark:text-white">Room ${room.nomor_kamar}</h3>
+                                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-black uppercase tracking-widest">${room.tipe_kamar.nama_tipe} • Floor ${room.lantai}</p>
                             </div>
-                            <div class="absolute bottom-4 left-4">
-                                <span class="px-3 py-1 bg-green-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg">Available</span>
+                            <div class="text-right">
+                                <p class="text-primary-600 font-bold">Rp ${new Intl.NumberFormat('id-ID').format(room.tipe_kamar.harga_per_malam)}</p>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase">per night</p>
                             </div>
                         </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-lg font-black text-gray-900 dark:text-white">Room ${room.nomor_kamar}</h3>
-                                <p class="text-primary-600 font-bold">Rp ${new Intl.NumberFormat('id-ID').format(room.tipe_kamar.harga_per_malam)}</p>
-                            </div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-4">${room.tipe_kamar.nama_tipe}</p>
 
-                            <div class="flex flex-wrap gap-2">
-                                <span class="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-[10px] font-bold text-gray-600 dark:text-gray-300">
-                                    <i data-lucide="users" class="w-3 h-3"></i> ${room.tipe_kamar.kapasitas} Pax
+                        <div class="flex flex-wrap gap-2">
+                            <span class="flex items-center gap-1.5 px-2 py-1 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                                <i data-lucide="users" class="w-3 h-3 text-accent-gold"></i> ${room.tipe_kamar.kapasitas} Pax
+                            </span>
+                            ${room.tipe_kamar.fasilitas ? room.tipe_kamar.fasilitas.slice(0, 2).map(f => `
+                                <span class="flex items-center gap-1.5 px-2 py-1 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                                    <i data-lucide="check" class="w-3 h-3 text-primary-500"></i> ${f}
                                 </span>
-                                ${room.tipe_kamar.fasilitas ? room.tipe_kamar.fasilitas.slice(0, 2).map(f => `
-                                    <span class="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg text-[10px] font-bold text-gray-600 dark:text-gray-300">
-                                        <i data-lucide="check" class="w-3 h-3 text-primary-500"></i> ${f}
-                                    </span>
-                                `).join('') : ''}
-                            </div>
+                            `).join('') : ''}
                         </div>
                     </div>
                 `;
@@ -289,14 +312,20 @@
         }
 
         function updateSummary() {
-            const ci = new Date(checkinInput.value);
-            const co = new Date(checkoutInput.value);
-            ci.setHours(0,0,0,0);
-            co.setHours(0,0,0,0);
+            const ciValue = checkinInput.value;
+            const coValue = checkoutInput.value;
 
-            const diff = co - ci;
-            const nights = Math.round(diff / (1000 * 60 * 60 * 24));
-            const duration = nights > 0 ? nights : 0;
+            let duration = 1;
+            if (ciValue && coValue) {
+                const ci = new Date(ciValue);
+                const co = new Date(coValue);
+                ci.setHours(0,0,0,0);
+                co.setHours(0,0,0,0);
+
+                const diff = co - ci;
+                let nights = Math.round(diff / (1000 * 60 * 60 * 24));
+                if (nights > 0) duration = nights;
+            }
 
             document.getElementById('sumDuration').textContent = `${duration} Nights`;
 
@@ -333,8 +362,8 @@
                 dpInput.classList.remove('border-red-500', 'text-red-500');
             }
 
-            document.getElementById('submitBtn').disabled = selectedRoomIds.size === 0 || duration === 0 || (dp > subtotal && subtotal > 0);
-            document.getElementById('submitBtn').style.opacity = (selectedRoomIds.size === 0 || duration === 0) ? '0.5' : '1';
+            document.getElementById('submitBtn').disabled = selectedRoomIds.size === 0 || (dp > subtotal && subtotal > 0);
+            document.getElementById('submitBtn').style.opacity = (selectedRoomIds.size === 0) ? '0.5' : '1';
         }
 
         checkinInput.addEventListener('change', fetchRooms);

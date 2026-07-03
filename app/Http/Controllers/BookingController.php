@@ -117,11 +117,7 @@ class BookingController extends Controller
             }
         }
 
-        $booking->update($request->validated());
-
-        if ($request->has('kamar_ids')) {
-            $booking->kamars()->sync($request->kamar_ids);
-        }
+        $this->bookingService->updateBooking($booking, $request->validated());
 
         return redirect()->route('booking.show', $booking)->with('success', 'Booking berhasil diperbarui.');
     }

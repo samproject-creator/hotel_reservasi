@@ -55,19 +55,19 @@
                                 {{ $booking->status }}
                             </span>
                         </td>
-                        <td class="px-8 py-5">
-                            <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                        <td class="px-8 py-5 text-right relative z-10">
+                            <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('booking.show', $booking) }}" class="p-2 text-primary-600 hover:bg-primary-50 dark:hover:bg-blue-900/20 rounded-xl transition-colors" title="Audit Reservation"><i data-lucide="file-search" class="w-5 h-5"></i></a>
                                 @can('cancel', $booking)
-                                <form action="{{ route('booking.cancel', $booking) }}" method="POST" onsubmit="return confirm('Annul this reservation?')">
+                                <form action="{{ route('booking.cancel', $booking) }}" method="POST" onsubmit="return confirm('Annul this reservation?')" class="inline">
                                     @csrf
-                                    <button class="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-xl transition-colors" title="Cancel Booking"><i data-lucide="calendar-x" class="w-5 h-5"></i></button>
+                                    <button type="submit" class="p-2 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-xl transition-colors" title="Cancel Booking"><i data-lucide="calendar-x" class="w-5 h-5"></i></button>
                                 </form>
                                 @endcan
                                 @if($booking->status === 'cancelled' && auth()->user()->isAdmin())
-                                <form action="{{ route('booking.destroy', $booking) }}" method="POST" onsubmit="return confirm('Purge this record from history?')">
+                                <form action="{{ route('booking.destroy', $booking) }}" method="POST" onsubmit="return confirm('Purge this record from history?')" class="inline">
                                     @csrf @method('DELETE')
-                                    <button class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors" title="Delete Permanent"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                    <button type="submit" class="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors" title="Delete Permanent"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                                 </form>
                                 @endif
                             </div>
