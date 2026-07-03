@@ -3,24 +3,22 @@
 namespace App\Services;
 
 use App\Models\Booking;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Common\Version;
+use chillerlan\QRCode\Output\QRMarkupSVG;
+use chillerlan\QRCode\Output\QRGdImagePNG;
 
 /**
  * QrCodeService
  *
- * Meng-generate QR Code untuk booking sebagai fitur nilai tambahan.
- *
- * Membutuhkan package: composer require simplesoftwareio/simple-qrcode
- *
- * Cara penggunaan:
- *   $svg    = QrCodeService::generate($booking);          // SVG string
- *   $base64 = QrCodeService::generateBase64($booking);   // base64 PNG untuk <img>
- *   $path   = QrCodeService::saveToFile($booking);       // simpan ke storage
+ * Meng-generate QR Code untuk booking menggunakan chillerlan/php-qrcode.
  */
 class QrCodeService
 {
     /**
      * Data yang di-encode dalam QR Code.
-     * Format: JSON string berisi info booking yang esensial.
      */
     public static function buildPayload(Booking $booking): string
     {
@@ -30,60 +28,50 @@ class QrCodeService
             'ci'      => $booking->tanggal_checkin->format('Y-m-d'),
             'co'      => $booking->tanggal_checkout->format('Y-m-d'),
             'kamar'   => $booking->kamars->pluck('nomor_kamar')->implode(','),
-            'ts'      => now()->timestamp, // timestamp generate
+            'ts'      => now()->timestamp,
         ]);
     }
 
     /**
-     * Generate QR Code sebagai SVG string.
-     * Tampilkan langsung di blade: {!! QrCodeService::generate($booking) !!}
+     * Generate QR Code sebagai SVG image source (base64).
      */
     public static function generate(Booking $booking, int $size = 200): string
     {
-        // Cek package tersedia
-        if (!class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class)) {
-            throw new \RuntimeException(
-                'Package QR Code belum di-install. Jalankan: composer require simplesoftwareio/simple-qrcode'
-            );
-        }
+        $options = new QROptions([
+            'version'         => Version::AUTO,
+            'eccLevel'        => EccLevel::L,
+            'outputInterface' => QRMarkupSVG::class,
+            'addQuietzone'    => true,
+            'svgAddXmlHeader' => false,
+            'outputBase64'    => true,
+        ]);
 
-        return \SimpleSoftwareIO\QrCode\Facades\QrCode::size($size)
-            ->format('svg')
-            ->generate(self::buildPayload($booking));
+        $dataUri = (new QRCode($options))->render(self::buildPayload($booking));
+
+        return sprintf('<img src="%s" width="%d" height="%d" alt="Booking QR" class="mx-auto" />', $dataUri, $size, $size);
     }
 
     /**
-     * Generate QR Code sebagai base64 PNG.
-     * Digunakan untuk disisipkan ke PDF atau email.
-     * Contoh: <img src="data:image/png;base64,{{ $base64 }}">
+     * Generate QR Code sebagai base64 PNG data URI.
      */
     public static function generateBase64(Booking $booking, int $size = 150): string
     {
-        if (!class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class)) {
-            throw new \RuntimeException(
-                'Package QR Code belum di-install. Jalankan: composer require simplesoftwareio/simple-qrcode'
-            );
-        }
+        $options = new QROptions([
+            'version'         => Version::AUTO,
+            'eccLevel'        => EccLevel::L,
+            'outputInterface' => QRGdImagePNG::class,
+            'addQuietzone'    => true,
+            'outputBase64'    => true,
+        ]);
 
-        $image = \SimpleSoftwareIO\QrCode\Facades\QrCode::size($size)
-            ->format('png')
-            ->generate(self::buildPayload($booking));
-
-        return base64_encode($image);
+        return (new QRCode($options))->render(self::buildPayload($booking));
     }
 
     /**
      * Simpan QR Code ke storage/app/public/qrcodes/{kode_booking}.png
-     * Kembalikan path relatif yang bisa diakses via Storage::url().
      */
     public static function saveToFile(Booking $booking, int $size = 200): string
     {
-        if (!class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class)) {
-            throw new \RuntimeException(
-                'Package QR Code belum di-install. Jalankan: composer require simplesoftwareio/simple-qrcode'
-            );
-        }
-
         $directory = storage_path('app/public/qrcodes');
         if (!is_dir($directory)) {
             mkdir($directory, 0755, true);
@@ -92,12 +80,16 @@ class QrCodeService
         $filename = $booking->kode_booking . '.png';
         $fullPath = $directory . '/' . $filename;
 
-        $image = \SimpleSoftwareIO\QrCode\Facades\QrCode::size($size)
-            ->format('png')
-            ->generate(self::buildPayload($booking));
+        $options = new QROptions([
+            'version'         => Version::AUTO,
+            'eccLevel'        => EccLevel::L,
+            'outputInterface' => QRGdImagePNG::class,
+            'addQuietzone'    => true,
+            'outputBase64'    => false,
+        ]);
 
-        file_put_contents($fullPath, $image);
+        (new QRCode($options))->render(self::buildPayload($booking), $fullPath);
 
-        return 'qrcodes/' . $filename; // relative path untuk Storage::url()
+        return 'qrcodes/' . $filename;
     }
 }

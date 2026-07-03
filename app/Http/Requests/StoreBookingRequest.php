@@ -16,7 +16,7 @@ class StoreBookingRequest extends FormRequest
         return [
             'tamu_id'          => 'required|exists:tamu,id',
             'tanggal_checkin'  => 'required|date|after_or_equal:today',
-            'tanggal_checkout' => 'required|date|after:tanggal_checkin',
+            'tanggal_checkout' => 'required|date|after_or_equal:tanggal_checkin',
             'jumlah_tamu'      => 'required|integer|min:1',
             'kamar_ids'        => 'required|array|min:1',
             'kamar_ids.*'      => 'exists:kamar,id',
@@ -34,7 +34,7 @@ class StoreBookingRequest extends FormRequest
             $dp = $this->input('uang_muka', 0);
 
             if ($checkin && $checkout && $kamarIds) {
-                $days = \Carbon\Carbon::parse($checkin)->diffInDays(\Carbon\Carbon::parse($checkout));
+                $days = max(1, \Carbon\Carbon::parse($checkin)->diffInDays(\Carbon\Carbon::parse($checkout)));
                 $totalPrice = \App\Models\Kamar::whereIn('id', $kamarIds)
                     ->with('tipeKamar')
                     ->get()
