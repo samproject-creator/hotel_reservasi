@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Modern Booking')
+@section('title', 'New Reservation')
 
-@section('extra_css')
+@push('styles')
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-dark-theme" disabled>
@@ -21,7 +21,7 @@
     .dark .ts-dropdown .active { background-color: #374151 !important; color: white !important; }
     .room-card.selected { border-color: #0ea5e9; ring: 4px; ring-color: #0ea5e9/20; }
 </style>
-@endsection
+@endpush
 
 @section('content')
 <div class="max-w-7xl mx-auto space-y-8">
@@ -183,7 +183,7 @@
 </div>
 @endsection
 
-@section('extra_js')
+@push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
@@ -259,7 +259,7 @@
             roomsFound.textContent = `${allRooms.length} rooms available`;
 
             allRooms.forEach(room => {
-                const isSelected = selectedRoomIds.has(room.id.toString());
+                const isSelected = selectedRoomIds.has(String(room.id));
 
                 const card = `
                     <div class="room-card group cursor-pointer bg-white dark:bg-gray-800 border-2 rounded-2xl p-5 transition-all hover:shadow-lg ${isSelected ? 'border-primary-500 ring-4 ring-primary-500/10' : 'border-gray-100 dark:border-gray-700'}"
@@ -293,6 +293,7 @@
         }
 
         window.toggleRoom = function(id) {
+            id = String(id);
             if (selectedRoomIds.has(id)) {
                 selectedRoomIds.delete(id);
             } else {
@@ -334,7 +335,7 @@
 
             let subtotal = 0;
             selectedRoomIds.forEach(id => {
-                const room = allRooms.find(r => r.id == id);
+                const room = allRooms.find(r => String(r.id) === id);
                 if (room) {
                     const price = parseFloat(room.tipe_kamar.harga_per_malam);
                     subtotal += price * duration;
@@ -373,4 +374,4 @@
         fetchRooms();
     });
 </script>
-@endsection
+@endpush

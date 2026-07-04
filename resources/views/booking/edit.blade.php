@@ -2,7 +2,7 @@
 
 @section('title', 'Edit Reservation')
 
-@section('extra_css')
+@push('styles')
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-dark-theme" disabled>
@@ -21,7 +21,7 @@
     .dark .ts-dropdown .active { background-color: #374151 !important; color: white !important; }
     .room-card.selected { border-color: #0ea5e9; ring: 4px; ring-color: #0ea5e9/20; }
 </style>
-@endsection
+@endpush
 
 @section('content')
 <div class="max-w-7xl mx-auto space-y-8">
@@ -147,7 +147,7 @@
 </div>
 @endsection
 
-@section('extra_js')
+@push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
 <script>
@@ -171,14 +171,14 @@
         flatpickr("#tanggal_checkout", fpConfig);
 
         let allRooms = [];
-        let selectedRoomIds = new Set(@json($booking->kamars->pluck('id')->map(fn($id) => $id->toString())));
+        let selectedRoomIds = new Set(@json($booking->kamars->pluck('id')->map(fn($id) => (string)$id)->toArray()));
 
         function fetchRooms() {
             const ci = checkinInput.value;
             const co = checkoutInput.value;
             if (!ci || !co) return;
 
-            fetch(`{{ route('booking.create') }}?checkin=${ci}&checkout=${co}`, {
+            fetch(`{{ route('booking.create') }}?checkin=${ci}&checkout=${co}&exclude_booking_id={{ $booking->id }}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
             .then(res => res.json())
@@ -186,7 +186,8 @@
                 allRooms = data;
                 renderRooms();
                 updateSummary();
-            });
+            })
+            .catch(err => console.error('Fetch error:', err));
         }
 
         function renderRooms() {
@@ -196,7 +197,7 @@
             roomsFound.textContent = `${allRooms.length} rooms available`;
 
             allRooms.forEach(room => {
-                const isSelected = selectedRoomIds.has(room.id.toString());
+                const isSelected = selectedRoomIds.has(String(room.id));
 
                 const card = `
                     <div class="room-card group cursor-pointer bg-white dark:bg-gray-800 border-2 rounded-2xl p-5 transition-all hover:shadow-lg ${isSelected ? 'border-primary-500 ring-4 ring-primary-500/10' : 'border-gray-100 dark:border-gray-700'}"
@@ -219,6 +220,7 @@
         }
 
         window.toggleRoom = function(id) {
+            id = String(id);
             if (selectedRoomIds.has(id)) {
                 selectedRoomIds.delete(id);
             } else {
@@ -250,7 +252,7 @@
 
                 const diff = co - ci;
                 let nights = Math.round(diff / (1000 * 60 * 60 * 24));
-                if (nights > 0) duration = nights;
+                duration = Math.max(1, nights);
             }
 
             document.getElementById('sumDuration').textContent = `${duration} Nights`;
@@ -259,7 +261,7 @@
             sumRoomList.innerHTML = '';
             let subtotal = 0;
             selectedRoomIds.forEach(id => {
-                const room = allRooms.find(r => r.id == id);
+                const room = allRooms.find(r => String(r.id) === id);
                 if (room) {
                     const price = parseFloat(room.tipe_kamar.harga_per_malam);
                     subtotal += price * duration;
@@ -284,8 +286,10 @@
         checkinInput.addEventListener('change', fetchRooms);
         checkoutInput.addEventListener('change', fetchRooms);
         dpInput.addEventListener('input', updateSummary);
+
         fetchRooms();
+        updateSummary();
         updateHiddenInputs();
     });
 </script>
-@endsection
+@endpush

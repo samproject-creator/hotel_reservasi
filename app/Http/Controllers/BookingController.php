@@ -55,6 +55,9 @@ class BookingController extends Controller
                   ->where('tanggal_checkout', '>', $checkin);
             })
             ->whereNotIn('status', ['cancelled', 'checkout'])
+            ->when($request->exclude_booking_id, function ($q) use ($request) {
+                $q->where('id', '!=', $request->exclude_booking_id);
+            })
             ->with('kamars')
             ->get()
             ->pluck('kamars.*.id')
