@@ -3,114 +3,96 @@
 @section('title', 'Laporan Finansial')
 
 @section('content')
-<div class="space-y-6">
-    {{-- HEADER --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="space-y-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h2 class="font-serif text-2xl text-purple-200 font-bold flex items-center gap-2">
-                <i data-lucide="bar-chart-3" class="w-6 h-6 text-purple-400"></i> Neraca & Laporan Finansial
-            </h2>
-            <p class="text-xs text-slate-400 mt-0.5">Pantau ringkasan arus kas, pelunasan reservasi, dan performa omzet hunian.</p>
+            <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Intelligence & Analytics</h1>
+            <p class="text-gray-500 dark:text-gray-400 font-medium">Deep insights into LuxeHotel's financial performance.</p>
         </div>
-        
-        {{-- Tombol Cetak / Export --}}
-        <div class="flex items-center gap-2 self-start sm:self-auto">
-            <a href="{{ route('laporan.pdf', ['dari' => $dari->toDateString(), 'sampai' => $sampai->toDateString()]) }}" 
-               class="px-3 py-2 bg-red-950/40 hover:bg-red-900/40 text-red-300 border border-red-900/40 text-xs font-semibold rounded flex items-center gap-1.5 transition-colors">
-                <i data-lucide="file-text" class="w-4 h-4"></i> Cetak PDF
+        <div class="flex items-center gap-3">
+            <a href="{{ route('laporan.pdf', request()->all()) }}" class="px-6 py-3 bg-white dark:bg-slate-800 text-red-600 dark:text-red-400 font-black rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-all border-2 border-red-100 dark:border-red-900/30 flex items-center gap-2 text-xs uppercase tracking-widest shadow-sm">
+                <i data-lucide="file-text" class="w-5 h-5"></i> Export PDF
             </a>
-            <a href="{{ route('laporan.excel', ['dari' => $dari->toDateString(), 'sampai' => $sampai->toDateString()]) }}" 
-               class="px-3 py-2 bg-emerald-950/40 hover:bg-emerald-900/40 text-emerald-300 border border-emerald-900/40 text-xs font-semibold rounded flex items-center gap-1.5 transition-colors">
-                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Ekspor Excel
+            <a href="{{ route('laporan.excel', request()->all()) }}" class="px-6 py-3 bg-white dark:bg-slate-800 text-green-600 dark:text-green-400 font-black rounded-2xl hover:bg-green-50 dark:hover:bg-green-900/20 transition-all border-2 border-green-100 dark:border-green-900/30 flex items-center gap-2 text-xs uppercase tracking-widest shadow-sm">
+                <i data-lucide="file-spreadsheet" class="w-5 h-5"></i> Export Excel
             </a>
         </div>
     </div>
 
-    {{-- FILTER TANGGAL --}}
-    <div class="bg-slate-900/40 border border-purple-950 rounded-lg p-4 shadow-sm">
-        <form action="{{ route('laporan.index') }}" method="GET" class="flex flex-col sm:flex-row items-end gap-3 text-xs">
-            <div class="w-full sm:w-auto">
-                <label class="block text-slate-400 font-medium mb-1">Dari Tanggal</label>
-                <input type="date" name="dari" value="{{ $dari->toDateString() }}" 
-                       class="w-full sm:w-44 px-3 py-1.5 bg-slate-950 border border-purple-950 rounded text-slate-200 font-mono text-xs focus:outline-none focus:border-purple-600">
+    <x-card>
+        <form action="{{ route('laporan.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Audit Commencement</label>
+                <input type="date" name="dari" value="{{ $dari->format('Y-m-d') }}" class="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 dark:text-white transition-all outline-none">
             </div>
-            <div class="w-full sm:w-auto">
-                <label class="block text-slate-400 font-medium mb-1">Sampai Tanggal</label>
-                <input type="date" name="sampai" value="{{ $sampai->toDateString() }}" 
-                       class="w-full sm:w-44 px-3 py-1.5 bg-slate-950 border border-purple-950 rounded text-slate-200 font-mono text-xs focus:outline-none focus:border-purple-600">
+            <div class="space-y-2">
+                <label class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Audit Conclusion</label>
+                <input type="date" name="sampai" value="{{ $sampai->format('Y-m-d') }}" class="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 dark:text-white transition-all outline-none">
             </div>
-            <button type="submit" class="w-full sm:w-auto px-5 py-2 bg-purple-950 hover:bg-purple-900 text-purple-200 font-semibold border border-purple-800 rounded transition-colors">
-                Buka Riwayat Kas
-            </button>
+            <div class="pb-0.5">
+                <button type="submit" class="w-full px-6 py-3.5 bg-gray-900 dark:bg-slate-700 text-white font-black rounded-2xl hover:bg-black dark:hover:bg-slate-600 transition-all shadow-xl shadow-gray-900/10 uppercase text-xs tracking-widest">Execute Filter</button>
+            </div>
         </form>
-    </div>
+    </x-card>
 
-    {{-- KARTU RESUME FINANSIAL --}}
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs">
-        <div class="bg-slate-900/30 border border-purple-950 rounded-lg p-4">
-            <span class="text-slate-400 block font-medium">Total Nilai Kontrak</span>
-            <span class="text-xl font-mono font-bold text-purple-300 block mt-1">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</span>
-            <span class="text-[10px] text-slate-500 block mt-0.5">// Omzet kotor terpesan</span>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="p-8 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm">
+            <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Aggregate Revenue</p>
+            <p class="text-2xl font-black text-gray-900 dark:text-white">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
         </div>
-        <div class="bg-slate-900/30 border border-purple-950 rounded-lg p-4">
-            <span class="text-slate-400 block font-medium">Total Uang Muka (DP)</span>
-            <span class="text-xl font-mono font-bold text-amber-400 block mt-1">Rp {{ number_format($totalUangMuka, 0, ',', '.') }}</span>
-            <span class="text-[10px] text-slate-500 block mt-0.5">// Dana jaminan awal masuk</span>
+        <div class="p-8 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm">
+            <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2">Down Payment</p>
+            <p class="text-2xl font-black text-blue-600 dark:text-blue-400">Rp {{ number_format($totalUangMuka, 0, ',', '.') }}</p>
         </div>
-        <div class="bg-slate-900/30 border border-purple-950 rounded-lg p-4">
-            <span class="text-slate-400 block font-medium">Pelunasan Checkout</span>
-            <span class="text-xl font-mono font-bold text-emerald-400 block mt-1">Rp {{ number_format($totalPelunasan, 0, ',', '.') }}</span>
-            <span class="text-[10px] text-slate-500 block mt-0.5">// Arus kas lunas di tangan</span>
+        <div class="p-8 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm">
+            <p class="text-[10px] font-black text-green-500 uppercase tracking-widest mb-2">Settlements</p>
+            <p class="text-2xl font-black text-green-600 dark:text-green-400">Rp {{ number_format($totalPelunasan, 0, ',', '.') }}</p>
         </div>
-        <div class="bg-slate-900/30 border border-purple-950 rounded-lg p-4">
-            <span class="text-slate-400 block font-medium">Sisa Piutang Berjalan</span>
-            <span class="text-xl font-mono font-bold text-sky-400 block mt-1">Rp {{ number_format($totalPiutang, 0, ',', '.') }}</span>
-            <span class="text-[10px] text-slate-500 block mt-0.5">// Tertahan di tamu menginap</span>
+        <div class="p-8 bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm">
+            <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-2">Outstanding</p>
+            <p class="text-2xl font-black text-orange-600 dark:text-orange-400">Rp {{ number_format($totalPiutang, 0, ',', '.') }}</p>
         </div>
     </div>
 
-    {{-- TABEL BREAKDOWN TRANSAKSI --}}
-    <div class="bg-slate-900/40 border border-purple-950 rounded-lg p-5 shadow-sm">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border-collapse">
+    <x-card title="Financial Transaction Ledger">
+        <div class="overflow-x-auto -mx-6">
+            <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="border-b border-purple-950 text-slate-400 font-serif">
-                        <th class="py-3 px-4">Kode</th>
-                        <th class="py-3 px-4">Nama Tamu</th>
-                        <th class="py-3 px-4">Bilik Kamar</th>
-                        <th class="py-3 px-4 text-right">Uang Muka</th>
-                        <th class="py-3 px-4 text-right">Total Tarif</th>
-                        <th class="py-3 px-4 text-center">Status</th>
+                    <tr class="border-b border-gray-100 dark:border-slate-700">
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Date</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Identifier</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Client Name</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">State</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest text-right">Value</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-purple-950/30 text-slate-300 font-sans">
-                    @forelse($bookings as $booking)
-                    <tr class="hover:bg-purple-950/10 transition-colors">
-                        <td class="py-3 px-4 font-mono font-bold text-purple-300">{{ $booking->kode_booking }}</td>
-                        <td class="py-3 px-4 font-medium">{{ $booking->tamu->nama_lengkap ?? '-' }}</td>
-                        <td class="py-3 px-4 font-mono">
-                            @foreach($booking->kamars as $k)
-                                <span class="bg-slate-950 px-1 py-0.5 rounded border border-purple-950 text-[11px]">RM-{{ $k->nomor_kamar }}</span>
-                            @endforeach
+                <tbody class="divide-y divide-gray-50 dark:divide-slate-700/50">
+                    @foreach($bookings as $booking)
+                    <tr class="hover:bg-gray-50/50 dark:hover:bg-slate-700/30 transition-colors group">
+                        <td class="px-8 py-5 text-sm font-medium text-gray-500 dark:text-gray-400">{{ $booking->created_at->format('M d, Y') }}</td>
+                        <td class="px-8 py-5 text-sm font-black text-gray-900 dark:text-white">{{ $booking->kode_booking }}</td>
+                        <td class="px-8 py-5 text-sm font-bold text-gray-600 dark:text-gray-300">{{ $booking->tamu->nama_lengkap }}</td>
+                        <td class="px-8 py-5 text-sm">
+                            @php
+                                $statusClasses = [
+                                    'pending' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                                    'confirmed' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+                                    'check-in' => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+                                    'check-out' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+                                    'cancelled' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+                                ];
+                                $class = $statusClasses[strtolower($booking->status)] ?? 'bg-gray-100 text-gray-700';
+                            @endphp
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest {{ $class }}">
+                                {{ $booking->status }}
+                            </span>
                         </td>
-                        <td class="py-3 px-4 font-mono text-right text-amber-500">Rp {{ number_format($booking->uang_muka, 0, ',', '.') }}</td>
-                        <td class="py-3 px-4 font-mono text-right font-bold text-slate-100">Rp {{ number_format($booking->total_harga, 0, ',', '.') }}</td>
-                        <td class="py-3 px-4 text-center">
-                            @if($booking->status === 'checkout')
-                                <span class="px-2 py-0.5 text-[9px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-900 rounded">Lunas</span>
-                            @else
-                                <span class="px-2 py-0.5 text-[9px] font-bold bg-sky-950 text-sky-400 border border-sky-900 rounded">Aktif</span>
-                            @endif
-                        </td>
+                        <td class="px-8 py-5 text-sm font-black text-gray-900 dark:text-white text-right">Rp {{ number_format($booking->total_harga, 0, ',', '.') }}</td>
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-500 italic">Tidak ditemukan pergerakan kas pada periode tanggal ini.</td>
-                    </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>
-    </div>
+    </x-card>
 </div>
 @endsection

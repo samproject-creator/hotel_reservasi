@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tamu;
+use App\Http\Requests\StoreTamuRequest;
 use Illuminate\Http\Request;
 
 class TamuController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Tamu::class, 'tamu');
+    }
+
     public function index(Request $request)
     {
         $query = Tamu::query();
@@ -28,21 +34,9 @@ class TamuController extends Controller
         return view('tamu.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreTamuRequest $request)
     {
-        $validated = $request->validate([
-            'nama_lengkap'    => 'required|string|max:100',
-            'nik'             => 'required|string|size:16|unique:tamu',
-            'email'           => 'nullable|email|max:100',
-            'no_hp'           => 'required|string|max:20',
-            'alamat'          => 'nullable|string',
-            'jenis_kelamin'   => 'required|in:L,P',
-            'tanggal_lahir'   => 'nullable|date|before:today',
-            'pekerjaan'       => 'nullable|string|max:100',
-            'kewarganegaraan' => 'nullable|string|max:50',
-        ]);
-
-        Tamu::create($validated);
+        Tamu::create($request->validated());
 
         return redirect()->route('tamu.index')->with('success', 'Data tamu berhasil ditambahkan.');
     }

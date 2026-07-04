@@ -18,7 +18,11 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = OFF;');
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
 
         // 1. Users
         $admin = User::create([
@@ -131,7 +135,11 @@ class DatabaseSeeder extends Seeder
             Checkout::create(['booking_id' => $booking->id, 'user_id' => $petugas->id, 'waktu_checkout' => Carbon::parse($coDate)->setHour(12), 'total_tagihan' => $sisa, 'biaya_tambahan' => 0, 'metode_pembayaran' => 'cash', 'total_bayar' => $sisa, 'kembalian' => 0]);
         }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = ON;');
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
 
         $this->command->info('Seeder selesai! Admin: admin@hotel.com / password | Petugas: petugas@hotel.com / password');
     }

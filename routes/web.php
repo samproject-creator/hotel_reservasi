@@ -13,7 +13,13 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\ProfileController;
 
+
+Route::get('/', function () {
+    return view('welcome');
+});
 
 Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
@@ -30,8 +36,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
     // Data Tamu
     Route::resource('tamu', TamuController::class);
@@ -72,5 +82,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/activity-log/export/excel', [ActivityLogController::class, 'exportExcel'])->name('activity-log.excel');
         Route::get('/activity-log/export/pdf', [ActivityLogController::class, 'exportPdf'])->name('activity-log.pdf');
         Route::post('/activity-log/clear-old', [ActivityLogController::class, 'clearOld'])->name('activity-log.clear-old');
+
+        // Settings
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
     });
 });

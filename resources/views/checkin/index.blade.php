@@ -1,108 +1,72 @@
 @extends('layouts.app')
 
-@section('title', 'Manifes Hunian Aktif (Check-in)')
+@section('title', 'Check-In List')
 
 @section('content')
-<div class="space-y-6">
-    {{-- HEADER --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="space-y-8">
+    <div class="flex items-center justify-between">
         <div>
-            <h2 class="font-serif text-2xl text-emerald-200 font-bold flex items-center gap-2">
-                <i data-lucide="door-open" class="w-6 h-6 text-emerald-400"></i> Log Hunian & Check-In Aktif
-            </h2>
-            <p class="text-xs text-slate-400 mt-0.5">Pantau daftar makhluk yang saat ini sedang menempati bilik tidur dan durasi singgah mereka.</p>
+            <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Active Occupancy</h1>
+            <p class="text-gray-500 dark:text-gray-400 font-medium">Monitor and manage guests currently residing within LuxeHotel.</p>
         </div>
-        
-        <a href="{{ route('booking.index') }}" 
-           class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold rounded border border-purple-950/60 flex items-center gap-2 transition-all self-start sm:self-auto">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Lihat Manifes Utama
-        </a>
     </div>
 
-    {{-- FILTER SEARCH --}}
-    <div class="bg-slate-900/40 border border-purple-950 rounded-lg p-4 shadow-sm">
-        <form action="{{ route('checkin.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
-            <div class="relative flex-1">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
-                    <i data-lucide="search" class="w-4 h-4"></i>
+    <x-card>
+        <form action="{{ route('checkin.index') }}" method="GET" class="mb-8">
+            <div class="relative max-w-md group">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 group-focus-within:text-primary-500 transition-colors">
+                    <i data-lucide="search" class="w-5 h-5"></i>
                 </span>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Kode Booking / Nama Penghuni..." 
-                       class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-purple-950 rounded text-slate-200 text-xs focus:outline-none focus:border-purple-600 transition-all">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search guest or booking ID..."
+                       class="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all dark:text-white">
             </div>
-            <button type="submit" class="px-5 py-2 bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 text-xs font-medium border border-emerald-900/40 rounded transition-colors">
-                Cari Penghuni
-            </button>
         </form>
-    </div>
 
-    {{-- TABEL DATA CHECK-IN --}}
-    <div class="bg-slate-900/40 border border-purple-950 rounded-lg p-5 shadow-sm">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs border-collapse">
-                <thead>
-                    <tr class="border-b border-purple-950 text-slate-400 font-serif">
-                        <th class="py-3 px-4">Kode Booking</th>
-                        <th class="py-3 px-4">Nama Penghuni</th>
-                        <th class="py-3 px-4">Bilik Kamar</th>
-                        <th class="py-3 px-4">Rencana Menginap</th>
-                        <th class="py-3 px-4">Status Transaksi</th>
-                        <th class="py-3 px-4 text-center">Aksi Lanjutan</th>
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 dark:bg-slate-800/50">
+                    <tr>
+                        <th class="px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Booking ID</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Client Identity</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Unit Assignment</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Status</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-purple-950/30 text-slate-300">
-                    @forelse($checkins as $booking)
-                    <tr class="hover:bg-purple-950/10 transition-colors">
-                        <td class="py-4 px-4 font-mono font-bold text-amber-500 text-sm">
-                            {{ $booking->kode_booking }}
+                <tbody class="divide-y divide-gray-100 dark:divide-slate-800">
+                    @foreach($checkins as $checkin)
+                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-800/30 transition-colors">
+                        <td class="px-8 py-5">
+                            <span class="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight">{{ $checkin->kode_booking }}</span>
                         </td>
-                        <td class="py-4 px-4">
-                            <div class="font-semibold text-purple-100 text-sm">{{ $booking->tamu->nama_lengkap ?? 'Tanpa Nama' }}</div>
-                            <span class="text-[10px] text-slate-500">// HP: {{ $booking->tamu->no_hp ?? '-' }}</span>
+                        <td class="px-8 py-5">
+                            <p class="text-sm font-black text-gray-900 dark:text-white leading-tight">{{ $checkin->tamu->nama_lengkap }}</p>
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500 font-bold mt-0.5 tracking-wider">{{ $checkin->tamu->no_hp }}</p>
                         </td>
-                        <td class="py-4 px-4">
-                            @foreach($booking->kamars as $kamar)
-                                <span class="px-1.5 py-0.5 bg-slate-950 border border-emerald-950/80 rounded text-emerald-400 font-mono text-[11px] inline-block mr-1">
-                                    🚪 Kamar {{ $kamar->nomor_kamar }}
-                                </span>
-                            @endforeach
+                        <td class="px-8 py-5">
+                            <div class="flex flex-wrap gap-2">
+                                @foreach($checkin->kamars as $kamar)
+                                <span class="px-2.5 py-1 bg-primary-50 dark:bg-blue-900/20 text-primary-700 dark:text-blue-400 rounded-lg text-[10px] font-black border border-primary-100 dark:border-blue-900/30 uppercase tracking-widest">Room {{ $kamar->nomor_kamar }}</span>
+                                @endforeach
+                            </div>
                         </td>
-                        <td class="py-4 px-4 text-slate-400">
-                            <div class="text-xs text-slate-300">{{ $booking->tanggal_checkin->format('d M Y') }} s/d {{ $booking->tanggal_checkout->format('d M Y') }}</div>
-                            <span class="text-[10px] text-purple-400 font-medium">{{ $booking->jumlah_malam }} Malam Masa Singgah</span>
+                        <td class="px-8 py-5">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest
+                                {{ $checkin->status === 'checkin' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' }}">
+                                {{ $checkin->status }}
+                            </span>
                         </td>
-                        <td class="py-4 px-4">
-                            @if($booking->status === 'checkin')
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-900">Sedang Menginap</span>
-                            @else
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-950 text-slate-400 border border-purple-950">Sudah Check-out</span>
-                            @endif
-                        </td>
-                        <td class="py-4 px-4 text-center">
-                            @if($booking->status === 'checkin')
-                                {{-- Tombol shortcut langsung menuju aksi Checkout --}}
-                                <form action="{{ route('checkout.proses', $booking->id) }}" method="POST" onsubmit="return confirm('Selesaikan masa tinggal dan lakukan ritual Check-out?')" class="inline">
-                                    @csrf
-                                    <button type="submit" class="px-3 py-1 bg-red-950 hover:bg-red-900 text-red-400 border border-red-900 rounded text-[10px] font-semibold transition-colors flex items-center gap-1 mx-auto">
-                                        <i data-lucide="log-out" class="w-3 h-3"></i> Eksekusi Check-out
-                                    </button>
-                                </form>
-                            @else
-                                <span class="text-[11px] text-slate-500 italic">Arsip Selesai</span>
-                            @endif
+                        <td class="px-8 py-5 text-right">
+                            <a href="{{ route('checkin.show', $checkin) }}" class="px-4 py-2 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 font-black rounded-xl text-[10px] uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors border border-gray-200 dark:border-slate-700">Audit Details</a>
                         </td>
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-500 italic">Tidak ada makhluk yang sedang menginap saat ini.</td>
-                    </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>
-
-        <div class="mt-4">
+        <div class="mt-8">
             {{ $checkins->links() }}
         </div>
-    </div>
+    </x-card>
 </div>
 @endsection

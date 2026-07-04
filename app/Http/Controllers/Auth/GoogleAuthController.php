@@ -14,6 +14,9 @@ class GoogleAuthController extends Controller
 {
     public function redirectToGoogle()
     {
+        if (!config('services.google.client_id')) {
+            return redirect()->route('login')->with('error', 'Google Login belum dikonfigurasi.');
+        }
         return Socialite::driver('google')->redirect();
     }
 
