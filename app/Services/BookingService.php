@@ -79,13 +79,14 @@ class BookingService
         $totalHarga = 0;
         $kamarData  = [];
 
-        foreach ($kamarIds as $kamarId) {
-            $kamar       = Kamar::with('tipeKamar')->findOrFail($kamarId);
+        $kamars = Kamar::with('tipeKamar')->whereIn('id', $kamarIds)->get();
+
+        foreach ($kamars as $kamar) {
             $harga       = $kamar->tipeKamar->harga_per_malam;
             $subtotal    = $harga * $malam;
             $totalHarga += $subtotal;
 
-            $kamarData[$kamarId] = [
+            $kamarData[$kamar->id] = [
                 'harga_malam'  => $harga,
                 'jumlah_malam' => $malam,
                 'subtotal'     => $subtotal,

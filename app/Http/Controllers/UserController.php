@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -31,15 +33,9 @@ class UserController extends Controller
         return view('users.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $validated = $request->validate([
-            'name'     => 'required|string|max:100',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
-            'role'     => 'required|in:admin,petugas',
-            'no_hp'    => 'nullable|string|max:20',
-        ]);
+        $validated = $request->validated();
 
         $validated['password'] = Hash::make($validated['password']);
         User::create($validated);
@@ -52,16 +48,9 @@ class UserController extends Controller
         return view('users.edit', compact('user'));
     }
 
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $validated = $request->validate([
-            'name'      => 'required|string|max:100',
-            'email'     => 'required|email|unique:users,email,' . $user->id,
-            'role'      => 'required|in:admin,petugas',
-            'no_hp'     => 'nullable|string|max:20',
-            'is_active' => 'boolean',
-            'password'  => 'nullable|min:8|confirmed',
-        ]);
+        $validated = $request->validated();
 
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
@@ -69,7 +58,7 @@ class UserController extends Controller
             unset($validated['password']);
         }
 
-        $validated['is_active'] = $request->boolean('is_active');
+        $validated['is_active'] = $request->boolean('is_active', true);
         $user->update($validated);
 
         return redirect()->route('users.index')->with('success', 'Data user berhasil diperbarui.');

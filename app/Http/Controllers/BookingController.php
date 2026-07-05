@@ -64,7 +64,8 @@ class BookingController extends Controller
             ->flatten()
             ->unique();
 
-            $query->whereNotIn('id', $occupiedKamarIds);
+            $query->whereNotIn('id', $occupiedKamarIds)
+                  ->where('status', '!=', 'maintenance');
         } else {
             $query->where('status', 'tersedia');
         }

@@ -63,8 +63,8 @@
                         <select name="metode_pembayaran" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 transition-all">
                             <option value="cash">Cash</option>
                             <option value="transfer">Bank Transfer</option>
-                            <option value="credit_card">Credit Card</option>
-                            <option value="debit_card">Debit Card</option>
+                            <option value="kartu_kredit">Credit Card</option>
+                            <option value="debit">Debit Card</option>
                         </select>
                     </div>
                     <div>

@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\TipeKamar;
+use App\Http\Requests\StoreTipeKamarRequest;
+use App\Http\Requests\UpdateTipeKamarRequest;
 use Illuminate\Http\Request;
 
 class TipeKamarController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(TipeKamar::class, 'tipe_kamar');
+    }
+
     public function index(Request $request)
     {
         $query = TipeKamar::query();
@@ -24,37 +31,22 @@ class TipeKamarController extends Controller
     {
         return view('tipe_kamar.create');
     }
-    public function store(Request $request)
+    public function store(StoreTipeKamarRequest $request)
     {
-        $validated = $request->validate([
-            'nama_tipe'       => 'required|string|max:50|unique:tipe_kamar,nama_tipe',
-            'harga_per_malam' => 'required|numeric|min:0',
-            'kapasitas'       => 'required|integer|min:1',
-            'deskripsi'       => 'nullable|string',
-            'fasilitas'       => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
-        // Jika di database kolom fasilitas bertipe json/array, 
-        // kita bisa mengubah string koma menjadi array sebelum disimpan:
         if ($request->filled('fasilitas')) {
-            // Mengubah "AC, TV" menjadi ["AC", "TV"]
             $validated['fasilitas'] = array_map('trim', explode(',', $request->fasilitas));
         }
 
         TipeKamar::create($validated);
 
-        return redirect()->route('tipe-kamar.index')->with('success', 'Tipe kamar baru berhasil ditempa.');
+        return redirect()->route('tipe-kamar.index')->with('success', 'Tipe kamar baru berhasil ditambahkan.');
     }
 
-    public function update(Request $request, TipeKamar $tipeKamar)
+    public function update(UpdateTipeKamarRequest $request, TipeKamar $tipeKamar)
     {
-        $validated = $request->validate([
-            'nama_tipe'       => 'required|string|max:50|unique:tipe_kamar,nama_tipe,' . $tipeKamar->id,
-            'harga_per_malam' => 'required|numeric|min:0',
-            'kapasitas'       => 'required|integer|min:1',
-            'deskripsi'       => 'nullable|string',
-            'fasilitas'       => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         if ($request->filled('fasilitas')) {
             $validated['fasilitas'] = array_map('trim', explode(',', $request->fasilitas));

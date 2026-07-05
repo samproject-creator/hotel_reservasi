@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tamu;
 use App\Http\Requests\StoreTamuRequest;
+use App\Http\Requests\UpdateTamuRequest;
 use Illuminate\Http\Request;
 
 class TamuController extends Controller
@@ -52,21 +53,9 @@ class TamuController extends Controller
         return view('tamu.edit', compact('tamu'));
     }
 
-    public function update(Request $request, Tamu $tamu)
+    public function update(UpdateTamuRequest $request, Tamu $tamu)
     {
-        $validated = $request->validate([
-            'nama_lengkap'    => 'required|string|max:100',
-            'nik'             => 'required|string|size:16|unique:tamu,nik,' . $tamu->id,
-            'email'           => 'nullable|email|max:100',
-            'no_hp'           => 'required|string|max:20',
-            'alamat'          => 'nullable|string',
-            'jenis_kelamin'   => 'required|in:L,P',
-            'tanggal_lahir'   => 'nullable|date|before:today',
-            'pekerjaan'       => 'nullable|string|max:100',
-            'kewarganegaraan' => 'nullable|string|max:50',
-        ]);
-
-        $tamu->update($validated);
+        $tamu->update($request->validated());
 
         return redirect()->route('tamu.index')->with('success', 'Data tamu berhasil diperbarui.');
     }

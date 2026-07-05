@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Kamar;
 use App\Models\TipeKamar;
+use App\Http\Requests\StoreKamarRequest;
+use App\Http\Requests\UpdateKamarRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -42,16 +44,9 @@ class KamarController extends Controller
         return view('kamar.create', compact('tipeKamars'));
     }
 
-    public function store(Request $request)
+    public function store(StoreKamarRequest $request)
     {
-        $validated = $request->validate([
-            'nomor_kamar'   => 'required|string|max:10|unique:kamar',
-            'tipe_kamar_id' => 'required|exists:tipe_kamar,id',
-            'lantai'        => 'required|integer|min:1',
-            'status'        => 'required|in:tersedia,ditempati,maintenance',
-            'keterangan'    => 'nullable|string',
-            'images.*'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048' 
-        ]);
+        $validated = $request->validated();
         
         $imageNames = [];
         if ($request->hasFile('images')) {
@@ -79,16 +74,9 @@ class KamarController extends Controller
         return view('kamar.edit', compact('kamar', 'tipeKamars'));
     }
 
-    public function update(Request $request, Kamar $kamar)
+    public function update(UpdateKamarRequest $request, Kamar $kamar)
     {
-        $validated = $request->validate([
-            'nomor_kamar'   => 'required|string|max:10|unique:kamar,nomor_kamar,' . $kamar->id,
-            'tipe_kamar_id' => 'required|exists:tipe_kamar,id',
-            'lantai'        => 'required|integer|min:1',
-            'status'        => 'required|in:tersedia,ditempati,maintenance',
-            'keterangan'    => 'nullable|string',
-            'images.*'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('images')) {
             if (!empty($kamar->images)) {
