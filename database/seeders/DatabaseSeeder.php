@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
                 'tipe_kamar_id' => $tipeId, 
                 'lantai'        => $lantai, 
                 'status'        => 'tersedia',
-                'keterangan'    => 'Peti istirahat standar kastil, anti sinar matahari.',
+                'keterangan'    => 'Kamar istirahat.',
                 'images'        => [] // <-- Berikan array kosong sebagai default nilai awal seeder
             ]);
         }

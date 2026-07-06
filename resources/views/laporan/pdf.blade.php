@@ -2,117 +2,136 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Finansial Reservasi Hotel</title>
+    <title>Laporan Finansial Reservasi Hotel - LuxeHotel</title>
     <style>
         /* Pengaturan Dasar Halaman Cetak */
         @page {
-            margin: 1.2cm 1.2cm 1.2cm 1.2cm;
+            margin: 1.5cm;
         }
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            color: #1e1b4b; /* Indigo tua */
+            background-color: #ffffff; /* Tetap putih agar hemat tinta saat dicetak */
+            color: #1a1a1a;
             font-size: 11px;
             line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
         }
         
         /* Brand / Header Laporan */
         .header-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .brand-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #4c1d95; /* Ungu gelap */
+            font-family: 'Playfair Display', 'Georgia', serif;
+            font-size: 22px;
+            font-weight: 300;
+            color: #d4af37; /* Emas Khas LuxeHotel */
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        .brand-subtitle {
+            color: #737373;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-top: 4px;
         }
         .report-meta {
             text-align: right;
-            color: #64748b;
+            color: #737373;
             font-size: 10px;
+            line-height: 1.5;
         }
 
-        /* Pembatas Estetik */
+        /* Pembatas Estetik Emas Lux */
         .divider {
-            height: 3px;
-            background-color: #7c3aed; /* Ungu neon */
-            margin-bottom: 20px;
+            height: 1px;
+            background: #d4af37;
+            opacity: 0.4;
+            margin-bottom: 25px;
         }
 
         /* Kartu Ringkasan Finansial */
         .summary-box-container {
             width: 100%;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         .summary-card {
             width: 23%;
-            padding: 10px;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-left: 4px solid #7c3aed;
+            padding: 12px 10px;
+            background-color: #121212; /* Hitam Arang khas tema gelap Luxe */
+            border: 1px solid rgba(212, 175, 55, 0.3); /* Border emas halus */
+            border-top: 3px solid #d4af37; /* Garis aksen emas di atas */
             display: inline-block;
             vertical-align: top;
             margin-right: 1.5%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
         .summary-card.last {
             margin-right: 0;
         }
         .summary-label {
-            font-size: 9px;
-            color: #64748b;
+            font-size: 8.5px;
+            color: #a3a3a3;
             text-transform: uppercase;
-            margin-bottom: 5px;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
             font-weight: bold;
         }
         .summary-value {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             font-family: 'Courier New', Courier, monospace;
-            color: #0f172a;
+            color: #ffffff; /* Teks nilai putih di atas background hitam */
         }
 
         /* Gaya Tabel Data */
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 15px;
         }
         .data-table th {
-            background-color: #4c1d95;
-            color: #ffffff;
-            padding: 8px 10px;
+            background-color: #121212; /* Hitam Premium */
+            color: #d4af37; /* Teks Emas */
+            padding: 10px 12px;
             font-weight: bold;
             text-transform: uppercase;
             font-size: 9px;
+            letter-spacing: 1px;
             text-align: left;
-            border: 1px solid #4c1d95;
+            border: 1px solid #121212;
         }
         .data-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #334155;
+            padding: 9px 12px;
+            border-bottom: 1px solid #e5e5e5;
+            color: #262626;
         }
         .data-table tr:nth-child(even) td {
-            background-color: #f8fafc;
+            background-color: #fafafa; /* Efek zebra ringan */
         }
 
-        /* Badge Status */
+        /* Badge Status Premium */
         .badge {
-            padding: 2px 6px;
-            font-size: 9px;
+            padding: 3px 8px;
+            font-size: 8.5px;
             font-weight: bold;
-            border-radius: 3px;
+            border-radius: 2px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
         }
         .badge-lunas {
-            background-color: #dcfce7;
-            color: #15803d;
+            background-color: rgba(16, 185, 129, 0.1); /* Hijau Emerald transparan */
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
         .badge-aktif {
-            background-color: #e0f2fe;
-            color: #0369a1;
+            background-color: rgba(14, 165, 233, 0.1); /* Biru Cerah transparan */
+            color: #0ea5e9;
+            border: 1px solid rgba(14, 165, 233, 0.2);
         }
 
         /* Helper Teknis */
@@ -133,11 +152,11 @@
     <table class="header-table">
         <tr>
             <td>
-                <div class="brand-title">NERACA & LAPORAN FINANSIAL</div>
-                <div style="color: #64748b; margin-top: 3px;">Manajemen Omzet & Arus Kas Hunian Kamar</div>
+                <div class="brand-title">LuxeHotel</div>
+                <div class="brand-subtitle">Neraca & Laporan Finansial Reservasi</div>
             </td>
             <td class="report-meta">
-                <strong>Periode:</strong> {{ \Carbon\Carbon::parse($dari)->format('d F Y') }} - {{ \Carbon\Carbon::parse($sampai)->format('d F Y') }}<br>
+                <strong>Periode:</strong> {{ \Carbon\Carbon::parse($dari)->format('d M Y') }} - {{ \Carbon\Carbon::parse($sampai)->format('d M Y') }}<br>
                 <strong>Tanggal Cetak:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }}
             </td>
         </tr>
@@ -153,17 +172,17 @@
         </div>
         <div class="summary-card">
             <div class="summary-label">Total Uang Muka</div>
-            <div class="summary-value" style="color: #b45309;">Rp {{ number_format($bookings->sum('uang_muka'), 0, ',', '.') }}</div>
+            <div class="summary-value" style="color: #f59e0b;">Rp {{ number_format($bookings->sum('uang_muka'), 0, ',', '.') }}</div>
         </div>
         <div class="summary-card">
             <div class="summary-label">Pelunasan Selesai</div>
-            <div class="summary-value" style="color: #15803d;">
+            <div class="summary-value" style="color: #10b981;">
                 Rp {{ number_format($bookings->where('status', 'checkout')->sum(fn($b) => $b->total_harga - $b->uang_muka), 0, ',', '.') }}
             </div>
         </div>
         <div class="summary-card last">
             <div class="summary-label">Piutang Berjalan</div>
-            <div class="summary-value" style="color: #0369a1;">
+            <div class="summary-value" style="color: #0ea5e9;">
                 Rp {{ number_format($bookings->where('status', 'checkin')->sum(fn($b) => $b->total_harga - $b->uang_muka), 0, ',', '.') }}
             </div>
         </div>
@@ -184,8 +203,8 @@
         <tbody>
             @forelse($bookings as $booking)
             <tr>
-                <td class="font-mono" style="font-weight: bold; color: #4c1d95;">{{ $booking->kode_booking }}</td>
-                <td>{{ $booking->tamu->nama_lengkap ?? '-' }}</td>
+                <td class="font-mono" style="font-weight: bold; color: #d4af37;">{{ $booking->kode_booking }}</td>
+                <td style="font-weight: 500;">{{ $booking->tamu->nama_lengkap ?? '-' }}</td>
                 <td class="font-mono">
                     @foreach($booking->kamar as $kamar)
                         RM-{{ $kamar->nomor_kamar }}{{ !$loop->last ? ',' : '' }}
@@ -203,7 +222,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center" style="color: #64748b; font-style: italic; padding: 20px;">
+                <td colspan="6" class="text-center" style="color: #737373; font-style: italic; padding: 25px;">
                     Tidak ditemukan pergerakan transaksi kas pada range tanggal ini.
                 </td>
             </tr>

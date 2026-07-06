@@ -24,6 +24,7 @@ class BookingController extends Controller
     {
         $query = Booking::with(['tamu', 'kamar.tipeKamar', 'user']);
 
+        // Filter 1: Pencarian Berdasarkan Kode / Nama Tamu (Eksisting)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -32,8 +33,19 @@ class BookingController extends Controller
             });
         }
 
+        // Filter 2: Berdasarkan Status Pilihan (Eksisting)
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+        }
+
+        // Filter 3: Rentang Tanggal Menginap Mulai (Baru - Sangat Cocok untuk Reservasi)
+        if ($request->filled('start_date')) {
+            $query->where('tanggal_checkin', '>=', $request->start_date);
+        }
+
+        // Filter 4: Rentang Tanggal Menginap Sampai (Baru)
+        if ($request->filled('end_date')) {
+            $query->where('tanggal_checkin', '<=', $request->end_date);
         }
 
         $bookings = $query->latest()->paginate(10)->withQueryString();

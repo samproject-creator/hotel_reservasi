@@ -9,7 +9,7 @@
             <h1 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Access Control</h1>
             <p class="text-gray-500 dark:text-gray-400 font-medium">Manage LuxeHotel operators and administrative privileges.</p>
         </div>
-        <a href="{{ route('users.create') }}" class="px-6 py-3 bg-gray-900 dark:bg-slate-700 text-white font-black rounded-2xl hover:bg-black dark:hover:bg-slate-600 transition-all shadow-xl shadow-gray-900/10 flex items-center gap-3 uppercase text-xs tracking-widest">
+        <a href="{{ route('users.create') }}" class="px-6 py-3 bg-gray-900 dark:bg-slate-700 text-white font-black rounded-2xl hover:bg-black dark:hover:bg-slate-600 transition-all shadow-xl shadow-gray-900/10 flex items-center gap-3 uppercase text-xs tracking-widest transform active:scale-95">
             <i data-lucide="user-plus" class="w-5 h-5 text-accent-gold"></i> Provision User
         </a>
     </div>
@@ -61,17 +61,20 @@
                             @endif
                         </td>
                         <td class="px-8 py-5">
-                            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                <a href="{{ route('users.edit', $user) }}" class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors">
+                            {{-- REMOVED OPACITY-0: TOMBOL AKSI SEKARANG SELALU MUNCUL SECARA PERMANEN --}}
+                            <div class="flex items-center justify-end gap-2 transition-all">
+                                <a href="{{ route('users.edit', $user) }}" class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors" title="Edit Operator">
                                     <i data-lucide="edit-3" class="w-5 h-5"></i>
                                 </a>
                                 @if($user->id !== auth()->id())
-                                <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Permanent deletion of operator profile?')">
+                                <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
                                     @csrf @method('DELETE')
-                                    <button class="p-2 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-xl hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors">
+                                    <button type="button" onclick="confirmDeleteOperator(this, '{{ $user->name }}')" class="p-2 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-xl hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors" title="Revoke Privilege">
                                         <i data-lucide="trash-2" class="w-5 h-5"></i>
                                     </button>
                                 </form>
+                                @else
+                                <span class="text-[10px] font-black uppercase tracking-wider text-gray-300 dark:text-slate-600 px-2 italic">You</span>
                                 @endif
                             </div>
                         </td>
@@ -85,4 +88,31 @@
         </div>
     </x-card>
 </div>
+
+{{-- SCRIPT POPUP MODERN SWEETALERT2 UNTUK AKSI DI TENGAH SCREEN --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const isDarkMode = document.documentElement.classList.contains('dark');
+
+    function confirmDeleteOperator(button, operatorName) {
+        Swal.fire({
+            title: 'Revoke Access Privilege?',
+            text: `Are you sure you want to permanently purge "${operatorName}" from the system operator registry? This cannot be undone.`,
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626', // Merah mewah destruktif
+            cancelButtonColor: isDarkMode ? '#334155' : '#6b7280',
+            confirmButtonText: 'Yes, Revoke Privilege',
+            background: isDarkMode ? '#1e293b' : '#ffffff',
+            color: isDarkMode ? '#ffffff' : '#0f172a',
+            customClass: {
+                popup: 'rounded-2xl border border-gray-100 dark:border-slate-800 shadow-2xl'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                button.closest('form').submit();
+            }
+        });
+    }
+</script>
 @endsection

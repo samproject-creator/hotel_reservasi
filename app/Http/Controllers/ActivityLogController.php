@@ -63,11 +63,33 @@ class ActivityLogController extends Controller
     public function exportExcel(Request $request)
     {
         ActivityLogService::logExport('activity_log', 'Excel', 'Export activity log');
-
-        return Excel::download(
-            new ActivityLogExport($request->all()),
-            'activity-log-' . now()->format('Ymd-His') . '.xlsx'
-        );
+        $query = ActivityLog::with('user')->latest('created_at');
+        if ($request->filled('user_id')) {
+            $query->byUser($request->user_id);
+        }
+        if ($request->filled('module')) {
+            $query->byModule($request->module);
+        }
+        if ($request->filled('action')) {
+            $query->byAction($request->action);
+        }
+        $dari = $request->filled('dari') ? Carbon::parse($request->dari) : null;
+        $sampai = $request->filled('sampai') ? Carbon::parse($request->sampai) : null;
+        if ($dari && $sampai) {
+            $query->byTanggal($request->dari, $request->sampai);
+        }
+        if ($request->filled('search')) {
+            $query->where('description', 'like', '%' . $request->search . '%');
+        }
+        $logs = $query->get();
+        $filename = 'activity-log-' . now()->format('Ymd-His') . '.xls';
+        
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename={$filename}");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        echo view('activity_log.excel', compact('logs', 'dari', 'sampai'))->render();
+        exit;
     }
 
     /**

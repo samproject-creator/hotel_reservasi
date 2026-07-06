@@ -1,95 +1,129 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sistem Audit Trail - PDF Export</title>
+    <title>LuxeHotel - System Audit Trail</title>
     <style>
-        @page { margin: 1cm; }
+        @page {
+            margin: 2cm;
+        }
         body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             color: #0f172a;
-            font-size: 10px;
-            line-height: 1.3;
+            font-size: 11px;
+            line-height: 1.5;
         }
+        /* Header Tema LuxeHotel */
         .header {
-            width: 100%;
-            margin-bottom: 15px;
-            border-bottom: 2px dashed #4c1d95;
-            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
-        .title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #4c1d95;
+        .brand {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            color: #0f172a;
         }
-        .meta {
+        .brand span {
+            color: #d97706; /* Accent Gold */
+        }
+        .subtitle {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+        .meta-info {
+            float: right;
             text-align: right;
             font-size: 9px;
-            color: #64748b;
+            color: #94a3b8;
         }
-        .data-table {
+        /* Tabel Jurnal */
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 20px;
         }
-        .data-table th {
-            background-color: #4c1d95;
+        th {
+            background-color: #0f172a;
             color: #ffffff;
-            padding: 6px 8px;
-            text-align: left;
-            font-weight: bold;
             font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 10px;
+            text-align: left;
         }
-        .data-table td {
-            padding: 6px 8px;
-            border-bottom: 1px solid #e2e8f0;
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #f1f5f9;
             vertical-align: top;
         }
-        .data-table tr:nth-child(even) td {
+        tr:nth-child(even) td {
             background-color: #f8fafc;
         }
-        .action-tag {
+        .timestamp {
+            font-family: Courier, monospace;
+            color: #64748b;
+        }
+        .operator {
             font-weight: bold;
+            color: #0f172a;
+        }
+        /* Badge Operasi */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-created { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .badge-updated { background-color: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .badge-deleted { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        
+        .description {
+            color: #334155;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
 
-    <table class="header">
-        <tr>
-            <td>
-                <div class="title">SYSTEM AUDIT TRAIL LOG REPORT</div>
-                <div style="color: #64748b; margin-top: 2px;">Data Keamanan & Histori Mutasi Operasional Hotel</div>
-            </td>
-            <td class="meta">
-                <strong>Total Batasan Cetak:</strong> {{ count($logs) }} Baris Max<br>
-                <strong>Waktu Ekspor:</strong> {{ now()->format('Y-m-d H:i:s') }}
-            </td>
-        </tr>
-    </table>
+    <div class="header">
+        <div class="meta-info">
+            Generated: {{ now()->format('d M Y H:i:s') }}<br>
+            Scope: Internal Security Ledger
+        </div>
+        <div class="brand">Luxe<span>Hotel</span></div>
+        <div class="subtitle">FORENSIC TIMELINE OF CRITICAL SYSTEM OPERATIONS</div>
+    </div>
 
-    <table class="data-table">
+    <table>
         <thead>
             <tr>
-                <th style="width: 18%;">Waktu Sistem</th>
-                <th style="width: 17%;">Operator User</th>
-                <th style="width: 12%;">Modul</th>
-                <th style="width: 12%;">Aksi</th>
-                <th style="width: 41%;">Deskripsi Log</th>
+                <th style="width: 20%;">Timestamp</th>
+                <th style="width: 25%;">Operator</th>
+                <th style="width: 15%;">Operation</th>
+                <th style="width: 40%;">Audit Description</th>
             </tr>
         </thead>
         <tbody>
             @foreach($logs as $log)
             <tr>
-                <td style="color: #64748b;">{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
-                <td style="font-weight: bold;">{{ $log->user->name ?? 'System Automated' }}</td>
-                <td>{{ strtoupper($log->module) }}</td>
+                <td class="timestamp">{{ $log->created_at->format('d M Y • H:i') }}</td>
+                <td class="operator">{{ $log->user->name ?? 'System Process' }}</td>
                 <td>
-                    <span class="action-tag">
-                        {{ strtoupper($log->action) }}
+                    <span class="badge badge-{{ $log->action }}">
+                        {{ $log->action }}
                     </span>
                 </td>
-                <td>{{ $log->description }}</td>
+                <td class="description">"{{ $log->description }}"</td>
             </tr>
             @endforeach
         </tbody>
