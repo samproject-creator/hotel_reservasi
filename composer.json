@@ -14,7 +14,7 @@
         "fakerphp/faker": "^1.23",
         "laravel/tinker": "^2.9",
         "mockery/mockery": "^1.6",
-        "phpunit/phpunit": "^12.5"
+        "phpunit/phpunit": "^11.5"
     },
     "autoload": {
         "psr-4": {

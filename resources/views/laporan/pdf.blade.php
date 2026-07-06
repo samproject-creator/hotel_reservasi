@@ -187,7 +187,7 @@
                 <td class="font-mono" style="font-weight: bold; color: #4c1d95;">{{ $booking->kode_booking }}</td>
                 <td>{{ $booking->tamu->nama_lengkap ?? '-' }}</td>
                 <td class="font-mono">
-                    @foreach($booking->kamars as $kamar)
+                    @foreach($booking->kamar as $kamar)
                         RM-{{ $kamar->nomor_kamar }}{{ !$loop->last ? ',' : '' }}
                     @endforeach
                 </td>

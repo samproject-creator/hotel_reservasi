@@ -32,16 +32,16 @@ class KamarController extends Controller
             $query->where('tipe_kamar_id', $request->tipe_kamar_id);
         }
 
-        $kamars     = $query->orderBy('nomor_kamar')->paginate(10)->withQueryString();
-        $tipeKamars = TipeKamar::orderBy('nama_tipe')->get();
+        $kamar     = $query->orderBy('nomor_kamar')->paginate(10)->withQueryString();
+        $tipekamar = TipeKamar::orderBy('nama_tipe')->get();
 
-        return view('kamar.index', compact('kamars', 'tipeKamars'));
+        return view('kamar.index', compact('kamar', 'tipekamar'));
     }
 
     public function create()
     {
-        $tipeKamars = TipeKamar::orderBy('nama_tipe')->get();
-        return view('kamar.create', compact('tipeKamars'));
+        $tipekamar = TipeKamar::orderBy('nama_tipe')->get();
+        return view('kamar.create', compact('tipekamar'));
     }
 
     public function store(StoreKamarRequest $request)
@@ -70,8 +70,8 @@ class KamarController extends Controller
 
     public function edit(Kamar $kamar)
     {
-        $tipeKamars = TipeKamar::orderBy('nama_tipe')->get();
-        return view('kamar.edit', compact('kamar', 'tipeKamars'));
+        $tipekamar = TipeKamar::orderBy('nama_tipe')->get();
+        return view('kamar.edit', compact('kamar', 'tipekamar'));
     }
 
     public function update(UpdateKamarRequest $request, Kamar $kamar)

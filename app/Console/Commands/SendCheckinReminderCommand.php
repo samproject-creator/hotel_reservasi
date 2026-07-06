@@ -24,7 +24,7 @@ class SendCheckinReminderCommand extends Command
         $days = (int) $this->option('days');
         $tanggal = now()->addDays($days)->format('Y-m-d');
 
-        $bookings = Booking::with(['tamu', 'kamars', 'user'])
+        $bookings = Booking::with(['tamu', 'kamar', 'user'])
                            ->where('tanggal_checkin', $tanggal)
                            ->whereIn('status', ['confirmed'])
                            ->get();

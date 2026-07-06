@@ -47,13 +47,13 @@ class LaporanReservasiExport implements FromCollection, WithHeadings, WithStyles
 
     public function collection()
     {
-        $bookings = Booking::with(['tamu', 'kamars.tipeKamar', 'user'])
+        $bookings = Booking::with(['tamu', 'kamar.tipeKamar', 'user'])
                            ->byTanggal($this->dari, $this->sampai)
                            ->get();
 
         return $bookings->map(function ($booking, $index) {
-            $kamarNomor = $booking->kamars->pluck('nomor_kamar')->implode(', ');
-            $kamarTipe  = $booking->kamars->map(fn($k) => $k->tipeKamar->nama_tipe)->unique()->implode(', ');
+            $kamarNomor = $booking->kamar->pluck('nomor_kamar')->implode(', ');
+            $kamarTipe  = $booking->kamar->map(fn($k) => $k->tipeKamar->nama_tipe)->unique()->implode(', ');
 
             return [
                 $index + 1,

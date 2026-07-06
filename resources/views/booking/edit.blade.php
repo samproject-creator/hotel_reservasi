@@ -171,7 +171,7 @@
         flatpickr("#tanggal_checkout", fpConfig);
 
         let allRooms = [];
-        let selectedRoomIds = new Set(@json($booking->kamars->pluck('id')->map(fn($id) => (string)$id)->toArray()));
+        let selectedRoomIds = new Set(@json($booking->kamar->pluck('id')->map(fn($id) => (string)$id)->toArray()));
 
         function fetchRooms() {
             const ci = checkinInput.value;

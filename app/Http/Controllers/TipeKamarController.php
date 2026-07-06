@@ -22,9 +22,9 @@ class TipeKamarController extends Controller
             $query->where('nama_tipe', 'like', '%' . $request->search . '%');
         }
 
-        $tipeKamars = $query->orderBy('nama_tipe')->paginate(10)->withQueryString();
+        $tipekamar = $query->orderBy('nama_tipe')->paginate(10)->withQueryString();
         
-        return view('tipe_kamar.index', compact('tipeKamars')); 
+        return view('tipe_kamar.index', compact('tipekamar')); 
     }
 
     public function create()
@@ -66,7 +66,7 @@ class TipeKamarController extends Controller
 
     public function destroy(TipeKamar $tipeKamar)
     {
-        if ($tipeKamar->kamars()->count() > 0) {
+        if ($tipeKamar->kamar()->count() > 0) {
             return back()->with('error', 'Gagal memusnahkan! Tipe ini masih terikat dengan beberapa entitas nomor kamar.');
         }
 

@@ -19,20 +19,20 @@ class DashboardController extends Controller
         $kamarDitempati   = Kamar::where('status', 'ditempati')->count();
         $totalTamu        = Tamu::count();
         $totalBooking     = Booking::count();
-        $bookingHariIni   = Booking::whereDate('created_at', today())->count();
+        $bookingHariIni   = Booking::whereDate('tanggal_checkin', today())->count();
         $bookingCheckin   = Booking::where('status', 'checkin')->count();
 
         // Pendapatan bulan ini dari checkout
         $pendapatanBulanIni = Checkout::whereMonth('waktu_checkout', now()->month)
                                        ->whereYear('waktu_checkout', now()->year)
-                                       ->sum('total_bayar');
+                                       ->sum('total_tagihan');
 
         // --- Data Grafik: Booking 6 bulan terakhir ---
         if (DB::getDriverName() === 'sqlite') {
-            $bookingFormat = "strftime('%Y-%m', created_at)";
+            $bookingFormat = "strftime('%Y-%m', tanggal_checkout)";
             $checkoutFormat = "strftime('%Y-%m', waktu_checkout)";
         } else {
-            $bookingFormat = "DATE_FORMAT(created_at, '%Y-%m')";
+            $bookingFormat = "DATE_FORMAT(tanggal_checkout, '%Y-%m')";
             $checkoutFormat = "DATE_FORMAT(waktu_checkout, '%Y-%m')";
         }
 
@@ -40,7 +40,7 @@ class DashboardController extends Controller
                 DB::raw("$bookingFormat as bulan"),
                 DB::raw('COUNT(*) as total')
             )
-            ->where('created_at', '>=', now()->subMonths(6))
+            ->where('tanggal_checkin', '>=', now()->subMonths(6))
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->get();
@@ -48,7 +48,7 @@ class DashboardController extends Controller
         // --- Data Grafik: Pendapatan 6 bulan terakhir ---
         $grafikPendapatan = Checkout::select(
                 DB::raw("$checkoutFormat as bulan"),
-                DB::raw('SUM(total_bayar) as total')
+                DB::raw('SUM(total_tagihan) as total')
             )
             ->where('waktu_checkout', '>=', now()->subMonths(6))
             ->groupBy('bulan')
@@ -56,7 +56,7 @@ class DashboardController extends Controller
             ->get();
 
         // --- Booking terbaru ---
-        $bookingTerbaru = Booking::with(['tamu', 'kamars.tipeKamar'])
+        $bookingTerbaru = Booking::with(['tamu', 'kamar.tipeKamar'])
                                   ->latest()
                                   ->take(5)
                                   ->get();

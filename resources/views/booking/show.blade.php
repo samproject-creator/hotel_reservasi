@@ -80,7 +80,7 @@
 
             <x-card title="Reserved Rooms">
                 <div class="space-y-4">
-                    @foreach($booking->kamars as $kamar)
+                    @foreach($booking->kamar as $kamar)
                     <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
                         <div class="flex items-center gap-4">
                             <div class="bg-white dark:bg-gray-700 p-2 rounded-xl text-primary-600 shadow-sm border border-gray-100 dark:border-gray-600">

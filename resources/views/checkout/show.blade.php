@@ -48,7 +48,7 @@
                     <div class="flex justify-between">
                         <span class="text-gray-500">Rooms</span>
                         <span class="font-bold text-gray-900">
-                            @foreach($booking->kamars as $kamar) {{ $kamar->nomor_kamar }}{{ !$loop->last ? ',' : '' }} @endforeach
+                            @foreach($booking->kamar as $kamar) {{ $kamar->nomor_kamar }}{{ !$loop->last ? ',' : '' }} @endforeach
                         </span>
                     </div>
                 </div>

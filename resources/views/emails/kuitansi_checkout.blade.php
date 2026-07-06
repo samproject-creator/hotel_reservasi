@@ -5,7 +5,7 @@
 </head>
 <body style="font-family: sans-serif; background-color: #0f172a; color: #cbd5e1; padding: 20px;">
     <div style="max-width: 600px; margin: 0 auto; background-color: #1e1b4b; border: 1px solid #4c1d95; padding: 20px; rounded-style: 8px;">
-        <h2 style="color: #e9d5ff; font-family: serif;">Hotel Transylvania</h2>
+        <h2 style="color: #e9d5ff; font-family: serif;">Luxe Hotel</h2>
         <p>Halo, <strong>{{ $booking->tamu->nama_lengkap }}</strong>.</p>
         <p>Terima kasih telah memilih Kastil kami sebagai tempat beristirahat. Berikut adalah bukti pelunasan digital Anda:</p>
         
@@ -17,7 +17,7 @@
             <tr>
                 <th style="padding: 8px; border-bottom: 1px solid #4c1d95;">Kamar</th>
                 <td style="padding: 8px; border-bottom: 1px solid #4c1d95;">
-                    @foreach($booking->kamars as $kamar)
+                    @foreach($booking->kamar as $kamar)
                         {{ $kamar->nomor_kamar }} 
                     @endforeach
                 </td>

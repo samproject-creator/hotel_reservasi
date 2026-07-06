@@ -50,9 +50,9 @@ class DatabaseSeeder extends Seeder
             ['301', $suite->id,    3], ['302', $suite->id,    3], ['303', $family->id,   3], ['304', $family->id,   3],
         ];
 
-        $kamars = [];
+        $kamar = [];
         foreach ($kamarDef as [$nomor, $tipeId, $lantai]) {
-            $kamars[$nomor] = Kamar::create([
+            $kamar[$nomor] = Kamar::create([
                 'nomor_kamar'   => $nomor, 
                 'tipe_kamar_id' => $tipeId, 
                 'lantai'        => $lantai, 
@@ -93,7 +93,7 @@ class DatabaseSeeder extends Seeder
             $malam   = Carbon::parse($ciDate)->diffInDays($coDate);
             $total   = $tipe->harga_per_malam * $malam;
             $dp      = $status !== 'cancelled' ? round($total * 0.3) : 0;
-            $kamar   = $kamars[$kamarNomor];
+            $kamar   = $kamar[$kamarNomor];
 
             $booking = Booking::create([
                 'kode_booking' => 'BK-'.now()->format('Ymd').'-'.str_pad($kodeCounter, 4, '0', STR_PAD_LEFT),
@@ -102,7 +102,7 @@ class DatabaseSeeder extends Seeder
                 'jumlah_tamu' => 2, 'status' => $status,
                 'total_harga' => $total, 'uang_muka' => $dp,
             ]);
-            $booking->kamars()->attach($kamar->id, ['harga_malam' => $tipe->harga_per_malam, 'jumlah_malam' => $malam, 'subtotal' => $total]);
+            $booking->kamar()->attach($kamar->id, ['harga_malam' => $tipe->harga_per_malam, 'jumlah_malam' => $malam, 'subtotal' => $total]);
             if ($status === 'checkin') $kamar->update(['status' => 'ditempati']);
             if ($ci) Checkin::create(['booking_id' => $booking->id, 'user_id' => $petugas->id, 'waktu_checkin' => Carbon::parse($ciDate)->setHour(14), 'no_identitas' => $tamu->nik]);
             if ($co) {
@@ -118,7 +118,7 @@ class DatabaseSeeder extends Seeder
             $coDate = Carbon::parse($ciDate)->addDays(rand(1,5))->format('Y-m-d');
             $malam  = Carbon::parse($ciDate)->diffInDays($coDate);
             $tamu   = collect($tamus)->random();
-            $kamar  = $kamars[collect(['102','103','202','203','302','304'])->random()];
+            $kamar  = $kamar[collect(['102','103','202','203','302','304'])->random()];
             $tipe   = $kamar->tipeKamar;
             $total  = $tipe->harga_per_malam * $malam;
             $sisa   = $total * 0.7;
@@ -130,7 +130,7 @@ class DatabaseSeeder extends Seeder
                 'jumlah_tamu' => 2, 'status' => 'checkout',
                 'total_harga' => $total, 'uang_muka' => $total * 0.3,
             ]);
-            $booking->kamars()->attach($kamar->id, ['harga_malam' => $tipe->harga_per_malam, 'jumlah_malam' => $malam, 'subtotal' => $total]);
+            $booking->kamar()->attach($kamar->id, ['harga_malam' => $tipe->harga_per_malam, 'jumlah_malam' => $malam, 'subtotal' => $total]);
             Checkin::create(['booking_id' => $booking->id, 'user_id' => $petugas->id, 'waktu_checkin' => Carbon::parse($ciDate)->setHour(14), 'no_identitas' => $tamu->nik]);
             Checkout::create(['booking_id' => $booking->id, 'user_id' => $petugas->id, 'waktu_checkout' => Carbon::parse($coDate)->setHour(12), 'total_tagihan' => $sisa, 'biaya_tambahan' => 0, 'metode_pembayaran' => 'cash', 'total_bayar' => $sisa, 'kembalian' => 0]);
         }

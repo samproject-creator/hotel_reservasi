@@ -35,7 +35,7 @@ class BookingService
                 'catatan'          => $data['catatan'] ?? null,
             ]);
 
-            $booking->kamars()->attach($calc['kamar_data']);
+            $booking->kamar()->attach($calc['kamar_data']);
 
             return $booking;
         });
@@ -51,7 +51,7 @@ class BookingService
         return DB::transaction(function () use ($booking, $data) {
             $checkin  = $data['tanggal_checkin'] ?? $booking->tanggal_checkin;
             $checkout = $data['tanggal_checkout'] ?? $booking->tanggal_checkout;
-            $kamarIds = $data['kamar_ids'] ?? $booking->kamars->pluck('id')->toArray();
+            $kamarIds = $data['kamar_ids'] ?? $booking->kamar->pluck('id')->toArray();
 
             $calc = $this->calculateTotal($kamarIds, $checkin, $checkout);
 
@@ -64,7 +64,7 @@ class BookingService
                 'catatan'          => $data['catatan'] ?? $booking->catatan,
             ]);
 
-            $booking->kamars()->sync($calc['kamar_data']);
+            $booking->kamar()->sync($calc['kamar_data']);
 
             return $booking;
         });
@@ -79,9 +79,9 @@ class BookingService
         $totalHarga = 0;
         $kamarData  = [];
 
-        $kamars = Kamar::with('tipeKamar')->whereIn('id', $kamarIds)->get();
+        $kamar = Kamar::with('tipeKamar')->whereIn('id', $kamarIds)->get();
 
-        foreach ($kamars as $kamar) {
+        foreach ($kamar as $kamar) {
             $harga       = $kamar->tipeKamar->harga_per_malam;
             $subtotal    = $harga * $malam;
             $totalHarga += $subtotal;
@@ -137,8 +137,8 @@ class BookingService
         }
 
         // Check for overlapping bookings
-        $query = Booking::whereHas('kamars', function ($q) use ($kamarIds) {
-            $q->whereIn('kamars.id', $kamarIds);
+        $query = Booking::whereHas('kamar', function ($q) use ($kamarIds) {
+            $q->whereIn('kamar.id', $kamarIds);
         })
         ->where(function ($q) use ($checkin, $checkout) {
             $q->where('tanggal_checkin', '<', $checkout)

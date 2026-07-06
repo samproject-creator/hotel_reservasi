@@ -15,9 +15,9 @@ class LaporanController extends Controller
         $sampai = $request->filled('sampai') ? Carbon::parse($request->sampai)->endOfDay() : Carbon::now()->endOfMonth();
 
         // Query data booking yang menghasilkan income (Check-in & Check-out)
-        $query = Booking::with(['tamu', 'kamars'])
+        $query = Booking::with(['tamu', 'kamar'])
             ->whereIn('status', ['checkin', 'checkout'])
-            ->whereBetween('created_at', [$dari, $sampai]);
+            ->whereBetween('tanggal_checkin', [$dari, $sampai]);
 
         $bookings = $query->latest()->get();
 
@@ -43,9 +43,9 @@ class LaporanController extends Controller
         $dari = \Carbon\Carbon::parse($request->dari)->startOfDay();
         $sampai = \Carbon\Carbon::parse($request->sampai)->endOfDay();
 
-        $bookings = Booking::with(['tamu', 'kamars'])
+        $bookings = Booking::with(['tamu', 'kamar'])
             ->whereIn('status', ['checkin', 'checkout'])
-            ->whereBetween('created_at', [$dari, $sampai])
+            ->whereBetween('tanggal_checkin', [$dari, $sampai])
             ->latest()
             ->get();
 
@@ -62,7 +62,7 @@ class LaporanController extends Controller
         $dari = Carbon::parse($request->dari)->startOfDay();
         $sampai = Carbon::parse($request->sampai)->endOfDay();
 
-        $bookings = Booking::with(['tamu', 'kamars'])
+        $bookings = Booking::with(['tamu', 'kamar'])
             ->whereIn('status', ['checkin', 'checkout'])
             ->whereBetween('created_at', [$dari, $sampai])
             ->get();

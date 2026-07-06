@@ -37,7 +37,7 @@ class Booking extends Model
     }
 
     // Many-to-Many dengan Kamar
-    public function kamars()
+    public function kamar()
     {
         return $this->belongsToMany(Kamar::class, 'booking_kamar')
                     ->withPivot('harga_malam', 'jumlah_malam', 'subtotal')

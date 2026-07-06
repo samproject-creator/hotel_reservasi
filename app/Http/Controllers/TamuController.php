@@ -44,7 +44,7 @@ class TamuController extends Controller
 
     public function show(Tamu $tamu)
     {
-        $tamu->load('bookings.kamars.tipeKamar');
+        $tamu->load('bookings.kamar.tipeKamar');
         return view('tamu.show', compact('tamu'));
     }
 

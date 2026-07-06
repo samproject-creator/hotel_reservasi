@@ -45,7 +45,7 @@
                         </td>
                         <td class="px-8 py-5">
                             <div class="flex flex-wrap gap-2">
-                                @foreach($checkin->kamars as $kamar)
+                                @foreach($checkin->kamar as $kamar)
                                 <span class="px-2.5 py-1 bg-primary-50 dark:bg-blue-900/20 text-primary-700 dark:text-blue-400 rounded-lg text-[10px] font-black border border-primary-100 dark:border-blue-900/30 uppercase tracking-widest">Room {{ $kamar->nomor_kamar }}</span>
                                 @endforeach
                             </div>

@@ -31,7 +31,7 @@
                     <select name="tipe_kamar_id" id="tipe_kamar_id"
                         class="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 dark:text-white transition-all outline-none" required>
                         <option value="">Select Type</option>
-                        @foreach($tipeKamars as $tipe)
+                        @foreach($tipekamar as $tipe)
                             <option value="{{ $tipe->id }}" {{ old('tipe_kamar_id') == $tipe->id ? 'selected' : '' }}>
                                 {{ $tipe->nama_tipe }} (Rp {{ number_format($tipe->harga_per_malam) }})
                             </option>

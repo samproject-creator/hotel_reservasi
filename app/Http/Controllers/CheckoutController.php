@@ -15,7 +15,7 @@ class CheckoutController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Booking::with(['tamu', 'kamars'])->where('status', 'checkout');
+        $query = Booking::with(['tamu', 'kamar'])->where('status', 'checkout');
 
         if ($request->filled('search')) {
             $query->where('kode_booking', 'like', '%' . $request->search . '%')
@@ -28,7 +28,7 @@ class CheckoutController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load(['tamu', 'kamars.tipeKamar', 'checkin', 'checkout.user']);
+        $booking->load(['tamu', 'kamar.tipeKamar', 'checkin', 'checkout.user']);
         $sisaTagihan = $booking->total_harga - $booking->uang_muka;
         return view('checkout.show', compact('booking', 'sisaTagihan'));
     }
@@ -61,7 +61,7 @@ class CheckoutController extends Controller
                 'kembalian'         => $kembalian,
             ]);
 
-            $booking->kamars()->update(['status' => 'tersedia']);
+            $booking->kamar()->update(['status' => 'tersedia']);
         });
 
         $booking->load('tamu');

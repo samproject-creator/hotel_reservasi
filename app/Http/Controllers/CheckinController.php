@@ -12,7 +12,7 @@ class CheckinController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Booking::with(['tamu', 'kamars'])
+        $query = Booking::with(['tamu', 'kamar'])
             ->whereIn('status', ['checkin', 'checkout']); // Menampilkan yang sedang menginap atau sudah selesai
 
         if ($request->filled('search')) {
@@ -27,7 +27,7 @@ class CheckinController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load(['tamu', 'kamars.tipeKamar', 'user', 'checkin']);
+        $booking->load(['tamu', 'kamar.tipeKamar', 'user', 'checkin']);
         return view('checkin.show', compact('booking'));
     }
     public function proses(Booking $booking)
@@ -44,7 +44,7 @@ class CheckinController extends Controller
                     'user_id'       => auth()->id(),
                 ]);
 
-                $booking->kamars()->update(['status' => 'ditempati']);
+                $booking->kamar()->update(['status' => 'ditempati']);
             });
 
             return redirect()->route('booking.index')->with('success', 'Pintu portal bilik terbuka! Tamu berhasil masuk ke dalam kamar.');

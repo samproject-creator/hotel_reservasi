@@ -19,7 +19,7 @@ class TipeKamar extends Model
     ];
 
     // --- Relasi ---
-    public function kamars()
+    public function kamar()
     {
         return $this->hasMany(Kamar::class, 'tipe_kamar_id');
     }

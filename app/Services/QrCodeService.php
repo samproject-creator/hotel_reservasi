@@ -27,7 +27,7 @@ class QrCodeService
             'tamu'    => $booking->tamu->nama_lengkap,
             'ci'      => $booking->tanggal_checkin->format('Y-m-d'),
             'co'      => $booking->tanggal_checkout->format('Y-m-d'),
-            'kamar'   => $booking->kamars->pluck('nomor_kamar')->implode(','),
+            'kamar'   => $booking->kamar->pluck('nomor_kamar')->implode(','),
             'ts'      => now()->timestamp,
         ]);
     }

@@ -38,7 +38,7 @@ class CheckInReminderNotification extends Notification implements ShouldQueue
             )
             ->line('**Tamu:** ' . $this->booking->tamu->nama_lengkap)
             ->line('**Tanggal Check-In:** ' . $this->booking->tanggal_checkin->isoFormat('D MMMM Y'))
-            ->line('**Kamar:** ' . $this->booking->kamars->pluck('nomor_kamar')->implode(', '))
+            ->line('**Kamar:** ' . $this->booking->kamar->pluck('nomor_kamar')->implode(', '))
             ->action('Proses Check-In', url('/checkin/' . $this->booking->id))
             ->line('Pastikan kamar sudah siap sebelum tamu tiba.');
     }

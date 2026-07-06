@@ -39,7 +39,7 @@
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Room Assignment</p>
                         <div class="flex flex-wrap gap-1">
-                            @foreach($booking->kamars as $kamar)
+                            @foreach($booking->kamar as $kamar)
                                 <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-[10px] font-bold rounded-lg border border-gray-200 dark:border-gray-600">Room {{ $kamar->nomor_kamar }}</span>
                             @endforeach
                         </div>
@@ -78,7 +78,7 @@
 
             <x-card title="Room Status">
                 <div class="space-y-4">
-                    @foreach($booking->kamars as $kamar)
+                    @foreach($booking->kamar as $kamar)
                     <div class="flex items-center justify-between">
                         <span class="text-sm text-gray-600 dark:text-gray-400">Room {{ $kamar->nomor_kamar }}</span>
                         <span class="px-2 py-0.5 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold rounded-full uppercase tracking-widest">Occupied</span>

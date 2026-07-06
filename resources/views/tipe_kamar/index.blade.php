@@ -18,7 +18,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        @foreach($tipeKamars as $tipe)
+        @foreach($tipekamar as $tipe)
         <x-card class="flex flex-col group">
             <div class="flex-1">
                 <div class="flex justify-between items-start mb-4">

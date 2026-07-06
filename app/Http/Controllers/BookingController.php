@@ -22,7 +22,7 @@ class BookingController extends Controller
 
     public function index(Request $request)
     {
-        $query = Booking::with(['tamu', 'kamars.tipeKamar', 'user']);
+        $query = Booking::with(['tamu', 'kamar.tipeKamar', 'user']);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -58,9 +58,9 @@ class BookingController extends Controller
             ->when($request->exclude_booking_id, function ($q) use ($request) {
                 $q->where('id', '!=', $request->exclude_booking_id);
             })
-            ->with('kamars')
+            ->with('kamar')
             ->get()
-            ->pluck('kamars.*.id')
+            ->pluck('kamar.*.id')
             ->flatten()
             ->unique();
 
@@ -70,13 +70,13 @@ class BookingController extends Controller
             $query->where('status', 'tersedia');
         }
 
-        $kamars = $query->get();
+        $kamar = $query->get();
 
         if ($request->ajax()) {
-            return response()->json($kamars);
+            return response()->json($kamar);
         }
 
-        return view('booking.create', compact('tamus', 'kamars'));
+        return view('booking.create', compact('tamus', 'kamar'));
     }
 
     public function store(StoreBookingRequest $request)
@@ -92,7 +92,7 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load(['tamu', 'kamars.tipeKamar', 'user', 'checkin.user', 'checkout.user']);
+        $booking->load(['tamu', 'kamar.tipeKamar', 'user', 'checkin.user', 'checkout.user']);
         return view('booking.show', compact('booking'));
     }
 
@@ -103,9 +103,9 @@ class BookingController extends Controller
         }
 
         $tamus  = Tamu::orderBy('nama_lengkap')->get();
-        $kamars = Kamar::with('tipeKamar')->where('status', 'tersedia')->get();
-        $booking->load('kamars.tipeKamar');
-        return view('booking.edit', compact('booking', 'tamus', 'kamars'));
+        $kamar = Kamar::with('tipeKamar')->where('status', 'tersedia')->get();
+        $booking->load('kamar.tipeKamar');
+        return view('booking.edit', compact('booking', 'tamus', 'kamar'));
     }
 
     public function update(UpdateBookingRequest $request, Booking $booking)
@@ -114,7 +114,7 @@ class BookingController extends Controller
         if ($request->filled('tanggal_checkin') || $request->filled('tanggal_checkout') || $request->filled('kamar_ids')) {
             $checkin = $request->input('tanggal_checkin', $booking->tanggal_checkin);
             $checkout = $request->input('tanggal_checkout', $booking->tanggal_checkout);
-            $kamarIds = $request->input('kamar_ids', $booking->kamars->pluck('id')->toArray());
+            $kamarIds = $request->input('kamar_ids', $booking->kamar->pluck('id')->toArray());
 
             if (!$this->bookingService->checkAvailability($kamarIds, $checkin, $checkout, $booking->id)) {
                 return back()->with('error', 'Satu atau lebih kamar tidak tersedia untuk jadwal baru ini.');
@@ -132,7 +132,7 @@ class BookingController extends Controller
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($booking) {
             $booking->update(['status' => 'cancelled']);
-            $booking->kamars()->update(['status' => 'tersedia']);
+            $booking->kamar()->update(['status' => 'tersedia']);
         });
 
         return redirect()->route('booking.index')->with('success', 'Booking berhasil dibatalkan.');
@@ -144,7 +144,7 @@ class BookingController extends Controller
             return back()->with('error', 'Hanya booking yang sudah dibatalkan yang dapat dihapus.');
         }
 
-        $booking->kamars()->detach();
+        $booking->kamar()->detach();
         $booking->delete();
         return redirect()->route('booking.index')->with('success', 'Booking berhasil dihapus.');
     }
