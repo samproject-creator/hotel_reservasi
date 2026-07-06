@@ -65,13 +65,12 @@
         <div class="space-y-6">
             <x-card title="Quick Actions">
                 <div class="space-y-3">
-                    <button class="w-full p-3 flex items-center gap-3 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors border border-gray-100 dark:border-gray-700">
-                        <i data-lucide="printer" class="w-4 h-4 text-gray-500"></i>
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Print Key Card Slip</span>
-                    </button>
-                    <button class="w-full p-3 flex items-center gap-3 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors border border-gray-100 dark:border-gray-700">
-                        <i data-lucide="bell" class="w-4 h-4 text-gray-500"></i>
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Wake-up Call Request</span>
+                    <button onclick="showQRCode()"
+                        class="w-full p-3 flex items-center gap-3 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors border border-gray-100 dark:border-gray-700">
+                        <i data-lucide="qr-code" class="w-4 h-4 text-gray-500"></i>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Show Booking QR
+                        </span>
                     </button>
                 </div>
             </x-card>
@@ -90,3 +89,4 @@
     </div>
 </div>
 @endsection
+

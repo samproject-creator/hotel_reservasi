@@ -62,11 +62,13 @@
                     <label for="images" class="text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Portfolio Images</label>
                     <div class="p-8 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-3xl text-center group hover:border-primary-500 transition-colors bg-gray-50/50 dark:bg-slate-800/50">
                         <input type="file" name="images[]" id="images" multiple class="hidden">
-                        <label for="images" class="cursor-pointer">
+                        <label for="images" class="cursor-pointer block">
                             <i data-lucide="upload-cloud" class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4 group-hover:text-primary-500 transition-colors"></i>
-                            <p class="text-sm font-bold text-gray-600 dark:text-gray-300">Click to upload room imagery</p>
-                            <p class="text-xs text-gray-400 mt-1">Professional JPG or PNG formats up to 2MB each.</p>
+                            <p id="upload-text" class="text-sm font-bold text-gray-600 dark:text-gray-300">Click to upload room imagery</p>
+                            <p id="upload-info" class="text-xs text-gray-400 mt-1">Professional JPG or PNG formats up to 2MB each.</p>
                         </label>
+                        
+                        <div id="preview" class="grid grid-cols-3 gap-4 mt-4"></div>
                     </div>
                     @error('images.*') <p class="text-red-500 text-xs font-bold mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -89,3 +91,41 @@
     </x-card>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('images');
+    const text = document.getElementById('upload-text');
+    const info = document.getElementById('upload-info');
+    const preview = document.getElementById('preview');
+
+    input.addEventListener('change', function () {
+        preview.innerHTML = ''; // Reset preview area
+
+        if (this.files.length) {
+            // 1. Ubah text & deskripsi file terpilih
+            text.innerHTML = this.files.length + " file(s) selected";
+            info.innerHTML = [...this.files].map(f => f.name).join("<br>");
+
+            // 2. Generate thumbnail preview gambar
+            [...this.files].forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        preview.innerHTML += `
+                            <img src="${e.target.result}" class="w-full h-32 object-cover rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        } else {
+            // Kembalikan ke text awal jika batal memilih
+            text.innerHTML = "Click to upload room imagery";
+            info.innerHTML = "Professional JPG or PNG formats up to 2MB each.";
+        }
+    });
+});
+</script>
+@endpush
