@@ -18,20 +18,16 @@
         <form action="{{ route('users.store') }}" method="POST" class="space-y-8">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-2">
+                
+                {{-- Full Name Input (Dibuat Full Width mengambil 2 kolom di layar medium ke atas) --}}
+                <div class="space-y-2 md:col-span-2">
                     <label for="name" class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Legal Identity</label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}"
                         class="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 dark:text-white transition-all outline-none" required placeholder="John Doe">
                     @error('name') <p class="text-rose-500 text-[10px] font-bold uppercase mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                <div class="space-y-2">
-                    <label for="username" class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">System Identifier</label>
-                    <input type="text" name="username" id="username" value="{{ old('username') }}"
-                        class="w-full px-5 py-3 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 dark:text-white transition-all outline-none" required placeholder="johndoe88">
-                    @error('username') <p class="text-rose-500 text-[10px] font-bold uppercase mt-1">{{ $message }}</p> @enderror
-                </div>
-
+                {{-- Email Input (Baris Baru - Kolom Kiri) --}}
                 <div class="space-y-2">
                     <label for="email" class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Electronic Mail</label>
                     <input type="email" name="email" id="email" value="{{ old('email') }}"
@@ -39,6 +35,7 @@
                     @error('email') <p class="text-rose-500 text-[10px] font-bold uppercase mt-1">{{ $message }}</p> @enderror
                 </div>
 
+                {{-- Role Selection Input (Baris Baru - Kolom Kanan) --}}
                 <div class="space-y-2">
                     <label for="role" class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Access Authorization</label>
                     <select name="role" id="role"
@@ -49,6 +46,7 @@
                     @error('role') <p class="text-rose-500 text-[10px] font-bold uppercase mt-1">{{ $message }}</p> @enderror
                 </div>
 
+                {{-- Password Input (Baris Berikutnya - Kolom Kiri) --}}
                 <div class="space-y-2">
                     <label for="password" class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Security Keyphrase</label>
                     <input type="password" name="password" id="password"
@@ -56,6 +54,7 @@
                     @error('password') <p class="text-rose-500 text-[10px] font-bold uppercase mt-1">{{ $message }}</p> @enderror
                 </div>
 
+                {{-- Password Confirmation Input (Baris Berikutnya - Kolom Kanan) --}}
                 <div class="space-y-2">
                     <label for="password_confirmation" class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Verify Keyphrase</label>
                     <input type="password" name="password_confirmation" id="password_confirmation"

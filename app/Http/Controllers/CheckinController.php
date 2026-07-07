@@ -13,11 +13,13 @@ class CheckinController extends Controller
     public function index(Request $request)
     {
         $query = Booking::with(['tamu', 'kamar'])
-            ->whereIn('status', ['checkin', 'checkout']); // Menampilkan yang sedang menginap atau sudah selesai
+            ->where('status', 'checkin'); 
 
         if ($request->filled('search')) {
-            $query->where('kode_booking', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('tamu', fn($q) => $q->where('nama_lengkap', 'like', '%' . $request->search . '%'));
+            $query->where(function ($q) use ($request) {
+                $q->where('kode_booking', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('tamu', fn($subQ) => $subQ->where('nama_lengkap', 'like', '%' . $request->search . '%'));
+            });
         }
 
         $checkins = $query->latest()->paginate(10)->withQueryString();

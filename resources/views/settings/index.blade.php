@@ -32,6 +32,20 @@
                 </div>
             </div>
         </x-card>
+        <x-card title="External Integration Hooks">
+            <div class="pt-4 space-y-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest block">Fonnte API Authorization Token (WhatsApp)</label>
+                    <div class="relative group">
+                        <input type="password" name="settings[fonnte_token]" value="{{ \App\Models\Setting::get('fonnte_token') }}" class="w-full px-5 py-4 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 dark:text-white transition-all outline-none pr-12 font-mono" placeholder="********************************">
+                        <div class="absolute inset-y-0 right-4 flex items-center text-gray-400">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-gray-400 font-medium">Used for automated booking confirmations and check-in alerts via WhatsApp.</p>
+                </div>
+            </div>
+        </x-card>
 
         <div class="flex items-center justify-between p-8 bg-gray-900 dark:bg-slate-700 rounded-3xl shadow-xl shadow-gray-900/10">
             <div>

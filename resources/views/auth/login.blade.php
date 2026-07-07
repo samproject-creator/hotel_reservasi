@@ -22,7 +22,7 @@
         }
     </script>
 </head>
-<body class="antialiased bg-slate-900 min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+<body class="antialiased bg-slate-900 min-h-screen py-12 px-6 flex items-center justify-center relative overflow-y-auto">
 
     {{-- Decorative Background --}}
     <div class="absolute inset-0 z-0">

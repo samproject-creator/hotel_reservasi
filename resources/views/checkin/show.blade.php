@@ -69,7 +69,7 @@
                         class="w-full p-3 flex items-center gap-3 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors border border-gray-100 dark:border-gray-700">
                         <i data-lucide="qr-code" class="w-4 h-4 text-gray-500"></i>
                         <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Show Booking QR
+                            Show Booking QR
                         </span>
                     </button>
                 </div>
@@ -88,5 +88,38 @@
         </div>
     </div>
 </div>
-@endsection
 
+{{-- MODAL COMPONENT UNTUK QR CODE --}}
+<div id="qrModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden" onclick="closeQRCode()">
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl max-w-xs w-full text-center space-y-4 shadow-2xl border border-gray-100 dark:border-slate-700" onclick="event.stopPropagation()">
+        <h3 class="text-lg font-black text-gray-900 dark:text-white uppercase tracking-wider">Booking QR Code</h3>
+        <p class="text-xs text-gray-400 font-medium">Scan to verify reservation metadata</p>
+        
+        <div class="bg-gray-50 p-4 rounded-2xl flex justify-center">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ $booking->kode_booking }}" alt="QR Code" class="w-48 h-48 rounded-lg shadow-sm">
+        </div>
+        
+        <p class="text-sm font-bold text-primary-600 bg-primary-50 dark:bg-blue-950/40 dark:text-blue-400 py-1.5 rounded-xl uppercase tracking-widest">{{ $booking->kode_booking }}</p>
+        
+        <button onclick="closeQRCode()" class="w-full py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-xs uppercase tracking-wider hover:bg-gray-200 transition-colors">
+            Close
+        </button>
+    </div>
+</div>
+
+{{-- JAVASCRIPT LOGIC --}}
+<script>
+function showQRCode() {
+    document.getElementById('qrModal').classList.remove('hidden');
+}
+
+function closeQRCode() {
+    document.getElementById('qrModal').classList.add('hidden');
+}
+
+// Menutup modal otomatis jika menekan tombol Escape (ESC) pada keyboard
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeQRCode();
+});
+</script>
+@endsection
